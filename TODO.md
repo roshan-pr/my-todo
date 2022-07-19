@@ -1,17 +1,23 @@
 # DOING
 
-  - [ ] Implement server
-    - [ ] Create app for end points
-      - [ ] get /login
-      - [ ] get /sign-up
-      - [ ] get /todo
+  - [ ] Try dotenv
+
 
 # TODO
 
-  - [ ] Move index.html page from public and serve independently
+  - [ ] Implement server
+    - [ ] Create app with end points
+      - [x] get /login
+      - [x] get /sign-up
+      - [x] get /todo
+      - [x] post /login
+      - [ ] post /todo
+      - [ ] post /todo/add-item
 
 # Done
 
+- [x] Move index.html page from public and serve independently
+  - [x] Renamed file to todo.html
 - [x] Create Login page
   - [x] Style login page
   - [x] Provide login link to home page
