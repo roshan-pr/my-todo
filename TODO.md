@@ -1,18 +1,23 @@
 # DOING
 
+  - [ ] Implement server
+    - [ ] Create app for end points
+      - [ ] get /login
+      - [ ] get /sign-up
+      - [ ] get /todo
+
 # TODO
 
-- [ ] Create Login page
-  - [ ] Style login page
-  - [ ] Provide login link to home page
-
-- [ ] Create Sign up page
-  - [ ] Style sign page
-  - [ ] Provide sign up link back to login page
-
-- [ ] Add a card in home page
-  - [ ] Style conveniently
-  - [ ] Provide proper flex
-
+  - [ ] Move index.html page from public and serve independently
 
 # Done
+
+- [x] Create Login page
+  - [x] Style login page
+  - [x] Provide login link to home page
+- [x] Create Sign up page
+  - [x] Style sign page
+  - [x] Provide sign up link back to login page
+- [x] Add a card in home page
+  - [x] Style conveniently
+  - [x] Provide proper flex

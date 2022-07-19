@@ -2,13 +2,35 @@
 
 <head>
 	<title>todo</title>
-	<link rel="stylesheet" href="css/styles.css" />
-	<script src="script/script.js"></script>
+	<link rel="stylesheet" href="css/index.css" />
+	<script src="script/index.js"></script>
 </head>
 
 <body>
-	<h1>todo</h1>
-	<p>Working on todo</p>
+	<nav>
+
+	</nav>
+	<main>
+		<div class="list">
+			<div class="title"> Event</div>
+			<form action="/add-item" method="post">
+				<div class="items">
+					<div>
+						<input type="checkbox" id="1" checked>
+						<label>Item1</label>
+					</div>
+					<div>
+						<input type="checkbox" id="2" checked>
+						<label>Item2</label>
+					</div>
+				</div>
+
+				<div class="item">
+					<input type="text" id="item" placeholder="... add item">
+				</div>
+			</form>
+		</div>
+	</main>
 </body>
 
 </html>
