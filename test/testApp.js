@@ -4,7 +4,8 @@ const { createApp } = require('../src/app.js');
 
 const appConfig = {
   staticRoot: 'public',
-  templateRoot: 'src/view'
+  templateRoot: 'src/view',
+  todoFilePath: 'test/db/todo.json'
 };
 
 const session = { name: 'session', keys: ['superKey'] };
@@ -14,7 +15,7 @@ const readFile = (fileName) => fs.readFileSync(fileName, 'utf-8');
 
 describe('/login', () => {
   it('Should serve login page', (done) => {
-    const app = createApp(appConfig, users, session);
+    const app = createApp(appConfig, users, session, readFile);
     request(app)
       .get('/login')
       .expect(/Login Page/)
@@ -43,7 +44,7 @@ describe('/login', () => {
 
 describe('/signup', () => {
   it('Should serve login page', (done) => {
-    const app = createApp(appConfig, users, session);
+    const app = createApp(appConfig, users, session, readFile);
     request(app)
       .get('/signup')
       .expect(/Signup Page/)
@@ -59,7 +60,6 @@ describe('/todo', () => {
     request(app)
       .post('/login')
       .send('name=ram&password=123')
-      .set('content-type', 'application/x-www-form-urlencoded')
       .end((err, res) => {
         cookie = res.header['set-cookie'];
         done();
@@ -70,6 +70,14 @@ describe('/todo', () => {
     request(app)
       .get('/todo')
       .expect(/Todo Page/)
+      .expect(200, done)
+  });
+
+  it('Should serve todo records for valid user', (done) => {
+    request(app)
+      .get('/todo/api')
+      .set('cookie', cookie)
+      .expect(/{/)
       .expect(200, done)
   });
 });

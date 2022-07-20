@@ -1,18 +1,22 @@
 # DOING
 
-  - [ ] Try dotenv
-
+  - [ ] Implement server
+    - [ ] Create app with end points
+      - [ ] post /add-item
 
 # TODO
 
   - [ ] Implement server
     - [ ] Create app with end points
+      - [ ] post /add-item
+      - [ ] post /todo/add-item
       - [x] get /login
       - [x] get /sign-up
       - [x] get /todo
       - [x] post /login
-      - [ ] post /todo
-      - [ ] post /todo/add-item
+      - [x] post /todo
+
+  - [ ] Try dotenv
 
 # Done
 

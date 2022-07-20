@@ -1,0 +1,36 @@
+{
+  "ram": {
+    "lastListId": 2,
+    "lists": [
+      {
+        "id": 1,
+        "lastItemId": 1,
+        "title": "Birthday",
+        "items": [
+          {
+            "id": 1,
+            "desc": "decorate hall",
+            "status": true
+          },
+          {
+            "id": 1,
+            "desc": "Buy gift",
+            "status": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "lastItemId": 1,
+        "title": "Party",
+        "items": [
+          {
+            "id": 1,
+            "desc": "Call friends",
+            "status": false
+          }
+        ]
+      }
+    ]
+  }
+}
