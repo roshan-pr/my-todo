@@ -8,13 +8,13 @@
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /add-item
       - [ ] post /todo/add-item
       - [x] get /login
       - [x] get /sign-up
       - [x] get /todo
       - [x] post /login
       - [x] post /todo
+      - [x] post /add-list
 
   - [ ] Try dotenv
 

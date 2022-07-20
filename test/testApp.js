@@ -2,6 +2,10 @@ const fs = require('fs');
 const request = require('supertest');
 const { createApp } = require('../src/app.js');
 
+const initTestData = () => {
+  fs.copyFileSync('test/db/initTodo.json', 'test/db/todo.json');
+};
+
 const appConfig = {
   staticRoot: 'public',
   templateRoot: 'src/view',
@@ -11,7 +15,20 @@ const appConfig = {
 const session = { name: 'session', keys: ['superKey'] };
 const users = { 'ram': { name: 'ram', password: '123' } };
 
-const readFile = (fileName) => fs.readFileSync(fileName, 'utf-8');
+const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
+const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
+
+initTestData(); // Start with default data set.
+
+describe('/unknown', () => {
+  it('Should serve file not found', (done) => {
+    const app = createApp(appConfig, users, session, readFile);
+    request(app)
+      .get('/unknown')
+      .expect('file not found')
+      .expect(404, done)
+  });
+});
 
 describe('/login', () => {
   it('Should serve login page', (done) => {
@@ -56,7 +73,8 @@ describe('/todo', () => {
   let app;
   let cookie;
   beforeEach((done) => {
-    app = createApp(appConfig, users, session, readFile);
+    initTestData();
+    app = createApp(appConfig, users, session, readFile, writeFile);
     request(app)
       .post('/login')
       .send('name=ram&password=123')
@@ -73,11 +91,20 @@ describe('/todo', () => {
       .expect(200, done)
   });
 
-  it('Should serve todo records for valid user', (done) => {
+  it('Should serve todo records for valid user /todo/api', (done) => {
     request(app)
       .get('/todo/api')
       .set('cookie', cookie)
-      .expect(/{/)
+      .expect(/"username":"ram"/)
+      .expect(200, done)
+  });
+
+  it('Should serve todo records for valid user /todo/add-list', (done) => {
+    request(app)
+      .post('/todo/add-list')
+      .set('cookie', cookie)
+      .send('title=party')
+      .expect('{"id":3}')
       .expect(200, done)
   });
 });

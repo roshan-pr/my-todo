@@ -16,9 +16,27 @@ const serveTodoLists = (req, res) => {
   res.sendStatus(401);
 };
 
-const addItem = (todoFilePath, writeFile) => (req, res, next) => {
-  console.log(req.todo);
-  next()
+const createList = (id, title) => {
+  return { id, lastItemId: 0, title, items: [] }
+};
+
+const addList = (todoFilePath, writeFile) => (req, res) => {
+  const username = req.session.name;
+  const todo = req.todo;
+  const { lastListId, lists } = todo[username];
+  const { title } = req.body;
+  const newListId = lastListId + 1;
+  const newList = createList(newListId, title);
+
+  lists.push(newList); // Updating the memory
+  todo[username] = { lastListId: newListId, lists }
+  console.log(todo);
+  try {
+    writeFile(todoFilePath, JSON.stringify(todo));
+    res.redirect('/todo');
+  } catch (error) {
+    res.status(500).end('Something went wrong');
+  }
 };
 
 const createTodoRouter = (config, readFile, writeFile) => {
@@ -27,7 +45,7 @@ const createTodoRouter = (config, readFile, writeFile) => {
   const todoRouter = express.Router();
   todoRouter.get('/', serveTodoPage(templateRoot, readFile));
   todoRouter.get('/api', serveTodoLists);
-  todoRouter.get('/add-item', addItem(todoFilePath, writeFile));
+  todoRouter.post('/add-list', addList(todoFilePath, writeFile));
 
   return todoRouter;
 }

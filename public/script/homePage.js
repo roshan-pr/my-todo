@@ -45,9 +45,9 @@ const createAList = ({ id, title, items }) => {
 const createAddListTemplate = () => {
 	const dom = ['div', { class: 'dummy-list', style: 'align-items:center; justify-content:center' },
 		['div', { class: 'add-item', style: 'width:100%' },
-			['form', { action: '/add-list', method: 'post' },
+			['form', { action: '/todo/add-list', method: 'post' },
 				['input', {
-					type: 'text', id: 'add-list', placeholder: '... add list', style: 'width:100%'
+					type: 'text', name: 'title', id: 'add-list', placeholder: '... add list', style: 'width:100%'
 				}, '']]],
 		['div', { class: 'icon' }, createImgTag('add', '/icons/add.png', 'add')],
 		['span', {}, 'click to add more']

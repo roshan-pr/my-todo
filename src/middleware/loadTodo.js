@@ -1,6 +1,7 @@
 const loadTodo = (todoFilePath, readFile) =>
   (req, res, next) => {
-    req.todo = JSON.parse(readFile(todoFilePath));
+    todo = JSON.parse(readFile(todoFilePath));
+    req.todo = todo;
     next();
   };
 

@@ -1,5 +1,5 @@
 {
-  "a": {
+  "ram": {
     "lastListId": 2,
     "lists": [
       {
@@ -31,18 +31,6 @@
           }
         ]
       }
-    }
-  ]
-},
-"b": {
-  "lastListId": 1,
-  "lists": [
-    {
-      "id": 1,
-      "lastItemId": 0,
-      "title": "Party",
-      "items": []
-    }
-  ]
-}
+    ]
+  }
 }
