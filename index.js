@@ -1,18 +1,23 @@
 const fs = require('fs');
 const { createApp } = require('./src/app.js');
-
-const appConfig = {
-  staticRoot: 'public',
-  templateRoot: 'src/view',
-  todoFilePath: 'db/todo.json'
-};
+require('dotenv').config();
 
 const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
+
 const writeFile = (fileName, content) =>
   fs.writeFileSync(fileName, content, 'utf-8');
 
 const main = (PORT) => {
-  const session = JSON.parse(readFile('./db/.session.json'));
+  const { STATIC_ROOT, TEMPLATE_ROOT,
+    COOKIE_NAME, COOKIE_KEY } = process.env;
+
+  const appConfig = {
+    staticRoot: STATIC_ROOT,
+    templateRoot: TEMPLATE_ROOT,
+    todoFilePath: 'db/todo.json'
+  };
+
+  const session = { name: COOKIE_NAME, keys: [COOKIE_KEY] }
   const users = JSON.parse(readFile('./db/.users.json'));
 
   const app = createApp(appConfig, users, session, readFile, writeFile);

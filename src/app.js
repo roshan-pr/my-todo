@@ -21,7 +21,7 @@ const createApp = (config, users, session, readFile, writeFile) => {
   app.use(cookieSession(session));
   app.use(createAuthRouter(users));
   app.use(loadTodo(todoFilePath, readFile));
-  app.use((req, res, next) => { console.log(req.body); next(); });
+  // app.use((req, res, next) => { console.log(req.body); next(); });
 
   app.use('/todo', createTodoRouter(config, readFile, writeFile));
 

@@ -2,13 +2,13 @@
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /add-item
 
 # TODO
 
   - [ ] Implement server
     - [ ] Create app with end points
       - [ ] post /todo/add-item
+      - [x] post /add-item
       - [x] get /login
       - [x] get /sign-up
       - [x] get /todo

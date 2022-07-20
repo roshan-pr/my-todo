@@ -15,11 +15,11 @@ const generateHtml = ([tag, attribute, ...rest]) => {
 };
 
 const createCheckbox = (items) => {
-	const checkboxes = items.map(({ id, desc, status }) => {
+	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
 		const dom = ['div', {},
 			['input', { type: "checkbox", id: id, [state]: '' }, ''],
-			['label', {}, desc]]
+			['label', {}, description]]
 		return generateHtml(dom);
 	});
 	return checkboxes.join('');
@@ -33,10 +33,12 @@ const createAList = ({ id, title, items }) => {
 			['div', { class: 'title' }, title],
 			['div', { class: 'icon' }, createImgTag('delete', '/icons/garbage.png', 'bin')]
 		],
-		['form', { action: '/add-item', method: 'post' },
+		['form', { action: '/todo/add-item', id: `form${id}`, method: 'post' },
 			['div', { class: 'items' }, createCheckbox(items)],
-			['div', { class: 'add-item' },
-				['input', { type: 'text', id: 'add-item', placeholder: '...add item' }, '']]
+			['input', { type: 'hidden', name: 'listId', value: id }, ''],
+			['div', { class: 'add-item', style: 'display:flex' },
+				['input', { type: 'text', name: 'description', id: 'add-item', placeholder: '...add item', required: '' }, ''],
+				['input', { type: 'submit', name: 'submit', id: 'add-item' }, '']]
 		]
 	];
 	return generateHtml(dom);
@@ -65,9 +67,9 @@ const xhrRequest = (request, cb, body = '') => {
 	xhr.send(body);
 };
 
-const renderLists = (xhr) => {
+const renderLists = ({ response }) => {
 	const defaultRes = { lists: [], username: 'unknown' }
-	const { lists, username } = xhr.response ? JSON.parse(xhr.response) : defaultRes;
+	const { lists, username } = response ? JSON.parse(response) : defaultRes;
 	console.log(lists);
 	let htmlLists = lists.map(createAList).join('');
 

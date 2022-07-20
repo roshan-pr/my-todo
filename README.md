@@ -19,3 +19,10 @@ README
 * Delete a todo list.
 
 ```
+
+```
+clone todo git repository
+
+npm setup
+npm start
+```

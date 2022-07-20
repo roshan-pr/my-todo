@@ -9,12 +9,12 @@
         "items": [
           {
             "id": 1,
-            "desc": "decorate hall",
+            "description": "decorate hall",
             "status": true
           },
           {
             "id": 1,
-            "desc": "Buy gift",
+            "description": "Buy gift",
             "status": false
           }
         ]
@@ -26,7 +26,7 @@
         "items": [
           {
             "id": 1,
-            "desc": "Call friends",
+            "description": "Call friends",
             "status": false
           }
         ]

@@ -99,12 +99,21 @@ describe('/todo', () => {
       .expect(200, done)
   });
 
-  it('Should serve todo records for valid user /todo/add-list', (done) => {
+  it('Should update todo records for valid user /todo/add-list', (done) => {
     request(app)
       .post('/todo/add-list')
       .set('cookie', cookie)
       .send('title=party')
-      .expect('{"id":3}')
-      .expect(200, done)
+      .expect('location', '/todo')
+      .expect(302, done)
+  });
+
+  it('Should update todo records for valid user /todo/add-item', (done) => {
+    request(app)
+      .post('/todo/add-item')
+      .set('cookie', cookie)
+      .send('listId=1&description=Buy cake')
+      .expect('location', '/todo')
+      .expect(302, done)
   });
 });
