@@ -20,7 +20,7 @@ const createCheckbox = (items, listId) => {
 		const dom = ['div', { class: 'item', id: id }, ['div', {},
 			['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
 			['label', {}, description]],
-			['label', { class: 'delete-item', onclick: 'deleteItem(event)' }, 'X']
+			['label', { class: 'delete-item fa-solid fa-trash-arrow-up', onclick: 'deleteItem(event)' }, '']
 		]
 		return generateHtml(dom);
 	});
@@ -33,8 +33,7 @@ const createAList = ({ id, title, items }) => {
 	const dom = ['div', { class: 'list', id },
 		['div', { class: 'list-header' },
 			['div', { class: 'title' }, title],
-			['div', { class: 'icon', onclick: 'deleteList(event)' },
-				createImgTag({ id: 'delete', src: '/icons/garbage.png', alt: 'bin' })]
+			['div', { class: 'icon fa-solid fa-trash-arrow-up', onclick: 'deleteList(event)', }, '']
 		],
 		['form', { action: '/todo/add-item', id, method: 'post', onsubmit: 'addItem(event)' },
 			['div', { class: 'items' }, createCheckbox(items, id)],

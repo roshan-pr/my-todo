@@ -54,9 +54,7 @@ form {
 }
 
 .delete-item {
-    visibility: hidden;
-    padding: 0px 20px;
-    color: red;
+    /* visibility: hidden; */
 }
 
 .item:hover .delete-item {

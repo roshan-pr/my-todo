@@ -23,7 +23,7 @@ const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'ut
 initTestData(); // Start with default data set.
 
 describe('/unknown', () => {
-  it('Should serve file not found', (done) => {
+  it.only('Should serve file not found', (done) => {
     const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/unknown')

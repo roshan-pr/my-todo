@@ -114,7 +114,7 @@ const persistTodo = (todoFilePath, writeFile) => (req, res) => {
 };
 
 const verifyUser = (req, res, next) => {
-  if (!req.session.name) {
+  if (!req.session.isPopulated) {
     res.redirect('/login');
     return;
   }
@@ -125,8 +125,8 @@ const createTodoRouter = (config, readFile, writeFile) => {
   const { templateRoot, todoFilePath } = config;
 
   const todoRouter = express.Router();
-  todoRouter.use(verifyUser);
-  todoRouter.get('/', serveTodoPage(templateRoot, readFile));
+  // todoRouter.use(verifyUser);
+  todoRouter.get('/', verifyUser, serveTodoPage(templateRoot, readFile));
   todoRouter.get('/api', serveTodoLists);
   todoRouter.post('/add-list', addList, persistTodo(todoFilePath, writeFile));
   todoRouter.post('/add-item', addItem, persistTodo(todoFilePath, writeFile));

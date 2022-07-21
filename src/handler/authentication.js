@@ -32,10 +32,20 @@ const persistTodo = (todoFilePath, writeFile) => (req, res, next) => {
   next();
 };
 
+const verifyUser = (req, res, next) => {
+  console.log('session', req.session);
+  if (req.session.isPopulated) {
+    res.redirect('/todo');
+    return;
+  }
+  next();
+};
+
 const createAuthRouter = (todoFilePath, usersFilePath, readFile, writeFile) => {
   const authRouter = express.Router();
-  authRouter.get('/login', serveLoginPage);
+  // authRouter.use(verifyUser);
 
+  authRouter.get('/login', verifyUser, serveLoginPage);
   authRouter.post('/login', loginUser);
   authRouter.post('/signup', signUpUser,
     persistTodo(todoFilePath, writeFile),

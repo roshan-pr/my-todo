@@ -23,7 +23,7 @@ const createLoginPage = (err = '') => `
         <button class="login-button">Login</button>
       </form>
       
-      <span>New user <a href="signup">signup</a></span>
+      <span>New user ? <a href="signup">Signup</a></span>
       <span class="message">${err}</span>
     </div>
   </div>

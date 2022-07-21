@@ -9,22 +9,33 @@ const { logout } = require('./handler/logout.js');
 const createAuthRouter = require('./handler/authentication.js');
 const createTodoRouter = require('./handler/todo.js');
 
-const noFileHandler = (req, res) => {
-  res.status(404).end('file not found');
+const notFoundHandler = (req, res) => {
+  res.status(404).end(`${req.url} Not Found`);
 };
 
+const verifyUser = (req, res, next) => {
+  if (!req.session.isPopulated) {
+    console.log(req.session);
+    res.redirect('/login');
+    return;
+  }
+  req.url = '/todo';
+  next();
+};
 
 const createApp = (config, session, readFile, writeFile) => {
   const { staticRoot, todoFilePath, usersFilePath } = config;
 
   const app = express();
   app.use(morgan('tiny'));
-  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
+  app.use(express.urlencoded({ extended: true }));
   app.use(cookieSession(session));
   app.use(loadUsers(usersFilePath, readFile));
   app.use(loadTodo(todoFilePath, readFile));
+
+  app.use(/^\/$/, verifyUser);
   app.use(createAuthRouter(todoFilePath, usersFilePath, readFile, writeFile));
   // app.use((req, res, next) => { console.log(req.body); next(); });
 
@@ -32,7 +43,7 @@ const createApp = (config, session, readFile, writeFile) => {
   app.use('/logout', logout);
 
   app.use(express.static(staticRoot));
-  app.use(noFileHandler);
+  app.use(notFoundHandler); // not found
   return app;
 };
 

@@ -22,7 +22,7 @@ const createSignUpPage = (message = '') => `
         <button class="signup-button">Signup</button>
       </form>
 
-      <span>Have an account <a href="/login">login</a></span>
+      <span>Have an account ? <a href="/login">Login</a></span>
       <span class="message">${message}</span>
 
     </div>
