@@ -1,6 +1,5 @@
 # DOING
 
-  - [ ] Wire up the sign-in page
 
 # TODO
 
@@ -9,6 +8,7 @@
 
 # Done
 
+  - [x] Wire up the sign-in page
   - [x] Implement server
     - [x] Create app with end points
       - [x] post /todo/delete-item

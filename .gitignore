@@ -1,4 +1,4 @@
 node_modules
-db/todo.json
+db
 src/view/todo.js
 .env

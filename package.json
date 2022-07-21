@@ -9,7 +9,7 @@
   "scripts": {
     "test": "mocha",
     "start": "node .",
-    "setup": "cp sample.env .env"
+    "install": "tar -xvzf set_up.tar.gz"
   },
   "keywords": [],
   "author": "",
