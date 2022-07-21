@@ -48,6 +48,25 @@ form {
     height: 80%;
 }
 
+.delete-item {
+    visibility: hidden;
+    padding: 0px 20px;
+    color: red;
+}
+
+.item:hover .delete-item {
+    visibility: visible;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    height: 30px;
+    border-bottom: 1px solid gray;
+}
+
 .icon>img {
     width: 30px;
     aspect-ratio: 1/1;

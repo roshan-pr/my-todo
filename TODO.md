@@ -1,13 +1,17 @@
 # DOING
 
-  - [ ] Implement server
-    - [ ] Create app with end points
-      - [ ] post /todo/delete-item
+  - [ ] Wire up the sign-in page
 
 # TODO
 
-  - [ ] Implement server
-    - [ ] Create app with end points
+  - [ ] Parameterize logger middleware
+  - [ ] Try dotenv
+
+# Done
+
+  - [x] Implement server
+    - [x] Create app with end points
+      - [x] post /todo/delete-item
       - [x] post /todo/delete-list
       - [x] post /todo/mark-item
       - [x] post /todo/add-item
@@ -17,13 +21,6 @@
       - [x] post /login
       - [x] post /todo
       - [x] post /add-list
-
-  - [ ] Wire up the sign-in page
-  - [ ] Parameterize logger middleware
-  - [ ] Try dotenv
-
-# Done
-
 - [x] Move index.html page from public and serve independently
   - [x] Renamed file to todo.html
 - [x] Create Login page

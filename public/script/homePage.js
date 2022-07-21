@@ -17,9 +17,11 @@ const generateHtml = ([tag, attribute, ...rest]) => {
 const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
-		const dom = ['div', { class: 'item', id: id },
+		const dom = ['div', { class: 'item', id: id }, ['div', {},
 			['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
-			['label', {}, description]]
+			['label', {}, description]],
+			['label', { class: 'delete-item', onclick: 'deleteItem(event)' }, 'X']
+		]
 		return generateHtml(dom);
 	});
 	return checkboxes.join('');
@@ -104,6 +106,17 @@ const deleteList = (event) => {
 	if (confirmDelete) {
 		console.log(body, confirmDelete);
 		const request = { method: 'POST', url: '/todo/delete-list', 'content-type': 'application/json' }
+		xhrRequest(request, loadTodo, body);
+	}
+};
+
+const deleteItem = (event) => {
+	const listId = event.target.closest('.list').id;
+	const itemId = event.target.closest('.item').id;
+	const body = JSON.stringify({ listId, itemId });
+	const confirmDelete = confirm('Delete this List');
+	if (confirmDelete) {
+		const request = { method: 'POST', url: '/todo/delete-item', 'content-type': 'application/json' }
 		xhrRequest(request, loadTodo, body);
 	}
 };

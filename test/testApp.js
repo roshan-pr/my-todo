@@ -135,4 +135,13 @@ describe('/todo', () => {
       .send(JSON.stringify({ listId: 1 }))
       .expect(200, done)
   });
+
+  it('Should delete todo item for valid user /todo/delete-list', (done) => {
+    request(app)
+      .post('/todo/delete-item')
+      .set('cookie', cookie)
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 1, itemId: 1 }))
+      .expect(200, done)
+  });
 });

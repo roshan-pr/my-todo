@@ -81,10 +81,10 @@ const markItem = (todoFilePath, writeFile) => (req, res) => {
   }
 };
 
-const getListIndex = (lists, listId) => {
+const getElementIndex = (array, id) => {
   let index = 0;
-  while (index < lists.length) {
-    if (lists[index].id === listId)
+  while (index < array.length) {
+    if (array[index].id === id)
       return index;
     index++;
   }
@@ -96,9 +96,28 @@ const deleteList = (todoFilePath, writeFile) => (req, res) => {
   const todo = req.todo[username];
   const { listId } = req.body;
 
-  const listIndex = getListIndex(todo.lists, +listId);
+  const listIndex = getElementIndex(todo.lists, +listId);
   if (listIndex >= 0) {
     todo.lists.splice(listIndex, 1);
+  };
+  req.todo[username] = todo;
+  try {
+    writeFile(todoFilePath, JSON.stringify(req.todo));
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).end('Something went wrong');
+  }
+};
+
+const deleteItem = (todoFilePath, writeFile) => (req, res) => {
+  const username = req.session.name;
+  const todo = req.todo[username];
+  const { listId, itemId } = req.body;
+  const list = todo.lists.find((list) => list.id === +listId);
+
+  const itemIndex = getElementIndex(list.items, +itemId);
+  if (itemIndex >= 0) {
+    list.items.splice(itemIndex, 1);
   };
   req.todo[username] = todo;
   try {
@@ -128,6 +147,7 @@ const createTodoRouter = (config, readFile, writeFile) => {
   todoRouter.post('/add-item', addItem(todoFilePath, writeFile));
   todoRouter.post('/mark-item', markItem(todoFilePath, writeFile));
   todoRouter.post('/delete-list', deleteList(todoFilePath, writeFile));
+  todoRouter.post('/delete-item', deleteItem(todoFilePath, writeFile));
 
   return todoRouter;
 }
