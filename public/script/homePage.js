@@ -14,11 +14,11 @@ const generateHtml = ([tag, attribute, ...rest]) => {
 	return createElement(tag, attribute, childElements);
 };
 
-const createCheckbox = (items) => {
+const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
-		const dom = ['div', {},
-			['input', { type: "checkbox", id: id, [state]: '' }, ''],
+		const dom = ['div', { class: 'item', id: id },
+			['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
 			['label', {}, description]]
 		return generateHtml(dom);
 	});
@@ -33,8 +33,8 @@ const createAList = ({ id, title, items }) => {
 			['div', { class: 'title' }, title],
 			['div', { class: 'icon' }, createImgTag('delete', '/icons/garbage.png', 'bin')]
 		],
-		['form', { action: '/todo/add-item', id: `form${id}`, method: 'post' },
-			['div', { class: 'items' }, createCheckbox(items)],
+		['form', { action: '/todo/add-item', id, method: 'post' },
+			['div', { class: 'items' }, createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
 			['div', { class: 'add-item', style: 'display:flex' },
 				['input', { type: 'text', name: 'description', id: 'add-item', placeholder: '...add item', required: '' }, ''],
@@ -84,6 +84,16 @@ const loadTodo = () => {
 		method: 'GET', url: '/todo/api',
 	};
 	xhrRequest(request, renderLists);
+};
+
+const markItem = (event) => {
+	const listId = event.target.closest('.list').id;
+	const itemId = event.target.id;
+	const status = event.target.checked;
+	const body = JSON.stringify({ listId, itemId, status });
+
+	const request = { method: 'POST', url: '/todo/mark-item', 'content-type': 'application/json' }
+	xhrRequest(request, loadTodo, body)
 };
 
 const main = () => {

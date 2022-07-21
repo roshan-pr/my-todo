@@ -2,15 +2,14 @@
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /todo/mark-item
+      - [ ] post /todo/delete-item
 
 # TODO
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /todo/mark-item
-      - [ ] post /todo/delete-item
       - [ ] post /todo/delete-list
+      - [x] post /todo/mark-item
       - [x] post /todo/add-item
       - [x] get /login
       - [x] get /sign-up

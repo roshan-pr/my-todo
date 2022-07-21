@@ -17,6 +17,7 @@ const createApp = (config, users, session, readFile, writeFile) => {
   const app = express();
   app.use(morgan('tiny'));
   app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
 
   app.use(cookieSession(session));
   app.use(createAuthRouter(users));

@@ -87,6 +87,7 @@ describe('/todo', () => {
   it('Should serve todo home page', (done) => {
     request(app)
       .get('/todo')
+      .set('cookie', cookie)
       .expect(/Todo Page/)
       .expect(200, done)
   });
@@ -108,12 +109,21 @@ describe('/todo', () => {
       .expect(302, done)
   });
 
-  it('Should update todo records for valid user /todo/add-item', (done) => {
+  it('Should add todo records for valid user /todo/add-item', (done) => {
     request(app)
       .post('/todo/add-item')
       .set('cookie', cookie)
       .send('listId=1&description=Buy cake')
       .expect('location', '/todo')
       .expect(302, done)
+  });
+
+  it('Should mark todo record for valid user /todo/mark-item', (done) => {
+    request(app)
+      .post('/todo/mark-item')
+      .set('cookie', cookie)
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 1, itemId: 1, status: true }))
+      .expect(200, done)
   });
 });

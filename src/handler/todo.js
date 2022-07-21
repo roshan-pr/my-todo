@@ -32,7 +32,7 @@ const addList = (todoFilePath, writeFile) => (req, res) => {
   const newListId = lastListId + 1;
   const newList = createList(newListId, title);
 
-  lists.push(newList); // Updating the memory
+  lists.unshift(newList); // Updating the memory
   todo[username] = { lastListId: newListId, lists }
   try {
     writeFile(todoFilePath, JSON.stringify(todo));
@@ -63,6 +63,24 @@ const addItem = (todoFilePath, writeFile) => (req, res) => {
   }
 };
 
+const markItem = (todoFilePath, writeFile) => (req, res) => {
+  const username = req.session.name;
+  const todo = req.todo[username];
+  const { listId, itemId, status } = req.body;
+
+  const list = todo.lists.find(list => list.id === +listId);
+  const item = list.items.find(item => item.id === +itemId);
+
+  item.status = status; // Updating in memory
+  req.todo[username] = todo;
+  try {
+    writeFile(todoFilePath, JSON.stringify(req.todo));
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).end('Something went wrong');
+  }
+};
+
 const verifyUser = (req, res, next) => {
   if (!req.session.name) {
     res.redirect('/login');
@@ -80,6 +98,7 @@ const createTodoRouter = (config, readFile, writeFile) => {
   todoRouter.get('/api', serveTodoLists);
   todoRouter.post('/add-list', addList(todoFilePath, writeFile));
   todoRouter.post('/add-item', addItem(todoFilePath, writeFile));
+  todoRouter.post('/mark-item', markItem(todoFilePath, writeFile));
 
   return todoRouter;
 }
