@@ -1,3 +1,5 @@
+const { createLoginPage } = require('../view/loginPage.js');
+
 const assignSession = req => {
   const timeStamp = new Date().getTime();
   req.session.id = timeStamp;
@@ -14,11 +16,14 @@ const isValidUser = (req) => {
 
 const redirectToTodo = res => res.redirect('/todo');
 
-const serveErrorCode = res => res.status(401).end();
+const serveErrorPage = res => {
+  const loginPage = createLoginPage('Invalid username or password');
+  res.end(loginPage);
+}
 
 const loginUser = (req, res) => {
   if (!isValidUser(req)) {
-    serveErrorCode(res);
+    serveErrorPage(res);
     return;
   }
   assignSession(req);

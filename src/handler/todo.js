@@ -63,10 +63,19 @@ const addItem = (todoFilePath, writeFile) => (req, res) => {
   }
 };
 
+const verifyUser = (req, res, next) => {
+  if (!req.session.name) {
+    res.redirect('/login');
+    return;
+  }
+  next();
+};
+
 const createTodoRouter = (config, readFile, writeFile) => {
   const { templateRoot, todoFilePath } = config;
 
   const todoRouter = express.Router();
+  todoRouter.use(verifyUser);
   todoRouter.get('/', serveTodoPage(templateRoot, readFile));
   todoRouter.get('/api', serveTodoLists);
   todoRouter.post('/add-list', addList(todoFilePath, writeFile));

@@ -2,13 +2,16 @@
 
   - [ ] Implement server
     - [ ] Create app with end points
+      - [ ] post /todo/mark-item
 
 # TODO
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /todo/add-item
-      - [x] post /add-item
+      - [ ] post /todo/mark-item
+      - [ ] post /todo/delete-item
+      - [ ] post /todo/delete-list
+      - [x] post /todo/add-item
       - [x] get /login
       - [x] get /sign-up
       - [x] get /todo
@@ -16,6 +19,7 @@
       - [x] post /todo
       - [x] post /add-list
 
+  - [ ] Parameterize logger middleware
   - [ ] Try dotenv
 
 # Done

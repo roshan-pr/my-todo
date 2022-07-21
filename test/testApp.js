@@ -49,13 +49,13 @@ describe('/login', () => {
       .expect(302, done)
   });
 
-  it('Should provide error code 401, --unauthorized user', (done) => {
+  it('Should serve error page, --unauthorized user', (done) => {
     const app = createApp(appConfig, users, session);
     request(app)
       .post('/login')
       .send('name=unknown&password=unknown')
-      .set('content-type', 'application/x-www-form-urlencoded')
-      .expect(401, done)
+      .expect(/Invalid username or password/)
+      .expect(200, done)
   });
 });
 
