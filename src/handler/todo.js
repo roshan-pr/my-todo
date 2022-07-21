@@ -24,7 +24,7 @@ const createItem = (id, description) => {
   return { id, description, status: false };
 };
 
-const addList = (todoFilePath, writeFile) => (req, res) => {
+const addList = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo;
   const { lastListId, lists } = todo[username];
@@ -34,15 +34,10 @@ const addList = (todoFilePath, writeFile) => (req, res) => {
 
   lists.push(newList); // Updating the memory
   todo[username] = { lastListId: newListId, lists }
-  try {
-    writeFile(todoFilePath, JSON.stringify(todo));
-    res.redirect('/todo');
-  } catch (error) {
-    res.status(500).end('Something went wrong');
-  }
+  next();
 };
 
-const addItem = (todoFilePath, writeFile) => (req, res) => {
+const addItem = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo[username];
   const { listId, description } = req.body;
@@ -55,15 +50,10 @@ const addItem = (todoFilePath, writeFile) => (req, res) => {
   list.items.push(item); // Updating in memory
   list.lastItemId = newItemId;
   req.todo[username] = todo;
-  try {
-    writeFile(todoFilePath, JSON.stringify(req.todo));
-    res.redirect('/todo');
-  } catch (error) {
-    res.status(500).end('Something went wrong');
-  }
+  next();
 };
 
-const markItem = (todoFilePath, writeFile) => (req, res) => {
+const markItem = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo[username];
   const { listId, itemId, status } = req.body;
@@ -73,12 +63,7 @@ const markItem = (todoFilePath, writeFile) => (req, res) => {
 
   item.status = status; // Updating in memory
   req.todo[username] = todo;
-  try {
-    writeFile(todoFilePath, JSON.stringify(req.todo));
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(500).end('Something went wrong');
-  }
+  next();
 };
 
 const getElementIndex = (array, id) => {
@@ -91,7 +76,7 @@ const getElementIndex = (array, id) => {
   return -1;
 };
 
-const deleteList = (todoFilePath, writeFile) => (req, res) => {
+const deleteList = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo[username];
   const { listId } = req.body;
@@ -101,6 +86,10 @@ const deleteList = (todoFilePath, writeFile) => (req, res) => {
     todo.lists.splice(listIndex, 1);
   };
   req.todo[username] = todo;
+  next();
+};
+
+const persistTodo = (todoFilePath, writeFile) => (req, res) => {
   try {
     writeFile(todoFilePath, JSON.stringify(req.todo));
     res.sendStatus(200);
@@ -109,7 +98,7 @@ const deleteList = (todoFilePath, writeFile) => (req, res) => {
   }
 };
 
-const deleteItem = (todoFilePath, writeFile) => (req, res) => {
+const deleteItem = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo[username];
   const { listId, itemId } = req.body;
@@ -120,12 +109,7 @@ const deleteItem = (todoFilePath, writeFile) => (req, res) => {
     list.items.splice(itemIndex, 1);
   };
   req.todo[username] = todo;
-  try {
-    writeFile(todoFilePath, JSON.stringify(req.todo));
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(500).end('Something went wrong');
-  }
+  next();
 };
 
 const verifyUser = (req, res, next) => {
@@ -143,11 +127,11 @@ const createTodoRouter = (config, readFile, writeFile) => {
   todoRouter.use(verifyUser);
   todoRouter.get('/', serveTodoPage(templateRoot, readFile));
   todoRouter.get('/api', serveTodoLists);
-  todoRouter.post('/add-list', addList(todoFilePath, writeFile));
-  todoRouter.post('/add-item', addItem(todoFilePath, writeFile));
-  todoRouter.post('/mark-item', markItem(todoFilePath, writeFile));
-  todoRouter.post('/delete-list', deleteList(todoFilePath, writeFile));
-  todoRouter.post('/delete-item', deleteItem(todoFilePath, writeFile));
+  todoRouter.post('/add-list', addList, persistTodo(todoFilePath, writeFile));
+  todoRouter.post('/add-item', addItem, persistTodo(todoFilePath, writeFile));
+  todoRouter.post('/mark-item', markItem, persistTodo(todoFilePath, writeFile));
+  todoRouter.post('/delete-list', deleteList, persistTodo(todoFilePath, writeFile));
+  todoRouter.post('/delete-item', deleteItem, persistTodo(todoFilePath, writeFile));
 
   return todoRouter;
 }

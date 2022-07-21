@@ -27,35 +27,36 @@ const createCheckbox = (items, listId) => {
 	return checkboxes.join('');
 };
 
-const createImgTag = (id, src, alt) => createElement('img', { id, src, alt }, '');
+const createImgTag = attributes => createElement('img', attributes, '');
 
 const createAList = ({ id, title, items }) => {
 	const dom = ['div', { class: 'list', id },
 		['div', { class: 'list-header' },
 			['div', { class: 'title' }, title],
 			['div', { class: 'icon', onclick: 'deleteList(event)' },
-				createImgTag('delete', '/icons/garbage.png', 'bin')]
+				createImgTag({ id: 'delete', src: '/icons/garbage.png', alt: 'bin' })]
 		],
-		['form', { action: '/todo/add-item', id, method: 'post' },
+		['form', { action: '/todo/add-item', id, method: 'post', onsubmit: 'addItem(event)' },
 			['div', { class: 'items' }, createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
-			['div', { class: 'add-item', style: 'display:flex' },
+			['div', { class: 'input-text', style: 'display:flex' },
 				['input', { type: 'text', name: 'description', id: 'add-item', placeholder: '...add item', required: '' }, ''],
-				['input', { type: 'submit', name: 'submit', id: 'add-item' }, '']]
-		]
+				['button', { type: 'submit', name: 'submit', id: 'add-item' }, 'Submit']
+			]],
 	];
 	return generateHtml(dom);
 };
 
 const createAddListTemplate = () => {
-	const dom = ['div', { class: 'dummy-list', style: 'align-items:center; justify-content:center' },
+	const dom = ['div', { class: 'dummy-list' },
 		['div', { class: 'add-item', style: 'width:100%' },
-			['form', { action: '/todo/add-list', method: 'post' },
+			['form', { onsubmit: 'addList(event)' },
 				['input', {
-					type: 'text', name: 'title', id: 'add-list', placeholder: '... add list', style: 'width:100%'
+					type: 'text', name: 'title',
+					id: 'add-list', placeholder: '... add list', style: 'width:100%'
 				}, '']]],
-		['div', { class: 'icon' }, createImgTag('add', '/icons/add.png', 'add')],
-		['span', {}, 'click to add more']
+		['div', { class: 'icon' }, createImgTag({ id: 'add', src: '/icons/add.png', alt: 'add' })],
+		['span', {}, 'Add more lists']
 	];
 	return generateHtml(dom);
 };
@@ -119,6 +120,34 @@ const deleteItem = (event) => {
 		const request = { method: 'POST', url: '/todo/delete-item', 'content-type': 'application/json' }
 		xhrRequest(request, loadTodo, body);
 	}
+};
+
+const addItem = (event) => {
+	event.preventDefault();
+
+	const form = event.target.closest('form');
+	const formElement = new FormData(form);
+	const body = new URLSearchParams(formElement);
+
+	const request = {
+		method: 'POST', url: '/todo/add-item',
+		'content-type': 'application/x-www-form-urlencoded'
+	}
+	xhrRequest(request, loadTodo, body);
+};
+
+const addList = (event) => {
+	event.preventDefault();
+
+	const form = event.target.closest('form');
+	const formElement = new FormData(form);
+	const body = new URLSearchParams(formElement);
+
+	const request = {
+		method: 'POST', url: '/todo/add-list',
+		'content-type': 'application/x-www-form-urlencoded'
+	}
+	xhrRequest(request, loadTodo, body);
 };
 
 const main = () => {

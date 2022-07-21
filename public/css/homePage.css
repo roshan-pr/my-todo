@@ -34,6 +34,11 @@ main {
     border: 1px solid black;
 }
 
+.dummy-list {
+    align-items: center;
+    justify-content: center;
+}
+
 .list-header {
     height: 12%;
     font-size: 30px;
@@ -78,7 +83,13 @@ form {
     height: 98%;
 }
 
-div.add-item>input {
+#add-item {
+    margin: 10px;
+}
+
+input[type='text'] {
     width: 100%;
     height: 30px;
+    border: none;
+    border-bottom: 1px solid black;
 }
