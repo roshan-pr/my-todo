@@ -12,10 +12,12 @@ const createSignUpPage = (message = '') => `
 
       <form action="/signup" method="POST">
         <div class="fields">
-          <input type="text" name="name" id="name" placeholder="Enter name">
+          <label>Username</label>
+          <input type="text" name="name" id="name">
         </div>
         <div class="fields">
-          <input type="password" name="password" id="password" placeholder="Enter password">
+          <label>Password</label>
+          <input type="password" name="password" id="password" >
         </div>
         <button class="signup-button">Signup</button>
       </form>
