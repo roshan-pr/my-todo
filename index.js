@@ -9,18 +9,18 @@ const writeFile = (fileName, content) =>
 
 const main = (PORT) => {
   const { STATIC_ROOT, TEMPLATE_ROOT,
-    COOKIE_NAME, COOKIE_KEY } = process.env;
+    COOKIE_NAME, COOKIE_KEY, TODO_FILE_PATH, USERS_FILE_PATH } = process.env;
 
   const appConfig = {
     staticRoot: STATIC_ROOT,
     templateRoot: TEMPLATE_ROOT,
-    todoFilePath: 'db/todo.json'
+    todoFilePath: TODO_FILE_PATH,
+    usersFilePath: USERS_FILE_PATH
   };
 
   const session = { name: COOKIE_NAME, keys: [COOKIE_KEY] }
-  const users = JSON.parse(readFile('./db/.users.json'));
 
-  const app = createApp(appConfig, users, session, readFile, writeFile);
+  const app = createApp(appConfig, session, readFile, writeFile);
   app.listen(PORT, () => console.log(`listening to ${PORT}`));
 };
 

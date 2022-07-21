@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieSession = require('cookie-session');
 const { loadTodo } = require('./middleware/loadTodo.js');
+const { loadUsers } = require('./middleware/loadUsers.js');
+
 const { logout } = require('./handler/logout.js');
 
 const createAuthRouter = require('./handler/authentication.js');
@@ -12,8 +14,8 @@ const noFileHandler = (req, res) => {
 };
 
 
-const createApp = (config, users, session, readFile, writeFile) => {
-  const { staticRoot, todoFilePath } = config;
+const createApp = (config, session, readFile, writeFile) => {
+  const { staticRoot, todoFilePath, usersFilePath } = config;
 
   const app = express();
   app.use(morgan('tiny'));
@@ -21,8 +23,9 @@ const createApp = (config, users, session, readFile, writeFile) => {
   app.use(express.json());
 
   app.use(cookieSession(session));
-  app.use(createAuthRouter(users));
+  app.use(loadUsers(usersFilePath, readFile));
   app.use(loadTodo(todoFilePath, readFile));
+  app.use(createAuthRouter(todoFilePath, usersFilePath, readFile, writeFile));
   // app.use((req, res, next) => { console.log(req.body); next(); });
 
   app.use('/todo', createTodoRouter(config, readFile, writeFile));

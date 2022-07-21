@@ -89,15 +89,6 @@ const deleteList = (req, res, next) => {
   next();
 };
 
-const persistTodo = (todoFilePath, writeFile) => (req, res) => {
-  try {
-    writeFile(todoFilePath, JSON.stringify(req.todo));
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(500).end('Something went wrong');
-  }
-};
-
 const deleteItem = (req, res, next) => {
   const username = req.session.name;
   const todo = req.todo[username];
@@ -110,6 +101,16 @@ const deleteItem = (req, res, next) => {
   };
   req.todo[username] = todo;
   next();
+};
+
+
+const persistTodo = (todoFilePath, writeFile) => (req, res) => {
+  try {
+    writeFile(todoFilePath, JSON.stringify(req.todo));
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).end('Something went wrong');
+  }
 };
 
 const verifyUser = (req, res, next) => {

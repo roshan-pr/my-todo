@@ -4,16 +4,18 @@ const { createApp } = require('../src/app.js');
 
 const initTestData = () => {
   fs.copyFileSync('test/db/initTodo.json', 'test/db/todo.json');
+  fs.copyFileSync('test/db/initUsers.json', 'test/db/users.json');
 };
 
 const appConfig = {
   staticRoot: 'public',
   templateRoot: 'src/view',
-  todoFilePath: 'test/db/todo.json'
+  todoFilePath: 'test/db/todo.json',
+  usersFilePath: 'test/db/users.json'
 };
 
 const session = { name: 'session', keys: ['superKey'] };
-const users = { 'ram': { name: 'ram', password: '123' } };
+// const users = { 'ram': { name: 'ram', password: '123' } };
 
 const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
@@ -22,7 +24,7 @@ initTestData(); // Start with default data set.
 
 describe('/unknown', () => {
   it('Should serve file not found', (done) => {
-    const app = createApp(appConfig, users, session, readFile);
+    const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/unknown')
       .expect('file not found')
@@ -32,7 +34,7 @@ describe('/unknown', () => {
 
 describe('/login', () => {
   it('Should serve login page', (done) => {
-    const app = createApp(appConfig, users, session, readFile);
+    const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/login')
       .expect(/Login Page/)
@@ -40,7 +42,7 @@ describe('/login', () => {
   });
 
   it('Should redirect to todo, --valid user', (done) => {
-    const app = createApp(appConfig, users, session);
+    const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .post('/login')
       .send('name=ram&password=123')
@@ -50,7 +52,7 @@ describe('/login', () => {
   });
 
   it('Should serve error page, --unauthorized user', (done) => {
-    const app = createApp(appConfig, users, session);
+    const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .post('/login')
       .send('name=unknown&password=unknown')
@@ -61,7 +63,7 @@ describe('/login', () => {
 
 describe('/signup', () => {
   it('Should serve login page', (done) => {
-    const app = createApp(appConfig, users, session, readFile);
+    const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/signup')
       .expect(/Signup Page/)
@@ -74,7 +76,7 @@ describe('/todo', () => {
   let cookie;
   beforeEach((done) => {
     initTestData();
-    app = createApp(appConfig, users, session, readFile, writeFile);
+    app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .post('/login')
       .send('name=ram&password=123')
@@ -146,7 +148,7 @@ describe('/todo', () => {
 
 describe('/logout', () => {
   it('Should logout the user and redirect to login page', (done) => {
-    const app = createApp(appConfig, users, session, readFile);
+    const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/logout')
       .expect('location', '/login')
