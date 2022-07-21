@@ -8,7 +8,7 @@
 
   - [ ] Implement server
     - [ ] Create app with end points
-      - [ ] post /todo/delete-list
+      - [x] post /todo/delete-list
       - [x] post /todo/mark-item
       - [x] post /todo/add-item
       - [x] get /login
@@ -18,6 +18,7 @@
       - [x] post /todo
       - [x] post /add-list
 
+  - [ ] Wire up the sign-in page
   - [ ] Parameterize logger middleware
   - [ ] Try dotenv
 

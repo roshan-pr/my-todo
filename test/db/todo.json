@@ -1,1 +1,19 @@
-{"ram":{"lastListId":2,"lists":[{"id":1,"lastItemId":1,"title":"Birthday","items":[{"id":1,"description":"decorate hall","status":true},{"id":1,"description":"Buy gift","status":false}]},{"id":2,"lastItemId":1,"title":"Party","items":[{"id":1,"description":"Call friends","status":false}]}]}}
+{
+  "ram": {
+    "lastListId": 2,
+    "lists": [
+      {
+        "id": 2,
+        "lastItemId": 1,
+        "title": "Party",
+        "items": [
+          {
+            "id": 1,
+            "description": "Call friends",
+            "status": false
+          }
+        ]
+      }
+    ]
+  }
+}

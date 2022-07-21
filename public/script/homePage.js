@@ -31,7 +31,8 @@ const createAList = ({ id, title, items }) => {
 	const dom = ['div', { class: 'list', id },
 		['div', { class: 'list-header' },
 			['div', { class: 'title' }, title],
-			['div', { class: 'icon' }, createImgTag('delete', '/icons/garbage.png', 'bin')]
+			['div', { class: 'icon', onclick: 'deleteList(event)' },
+				createImgTag('delete', '/icons/garbage.png', 'bin')]
 		],
 		['form', { action: '/todo/add-item', id, method: 'post' },
 			['div', { class: 'items' }, createCheckbox(items, id)],
@@ -92,8 +93,19 @@ const markItem = (event) => {
 	const status = event.target.checked;
 	const body = JSON.stringify({ listId, itemId, status });
 
-	const request = { method: 'POST', url: '/todo/mark-item', 'content-type': 'application/json' }
-	xhrRequest(request, loadTodo, body)
+	const request = { method: 'POST', url: '/todo/mark-item', 'content-type': 'application/json' };
+	xhrRequest(request, loadTodo, body);
+};
+
+const deleteList = (event) => {
+	const listId = event.target.closest('.list').id;
+	const body = JSON.stringify({ listId });
+	const confirmDelete = confirm('Delete this List');
+	if (confirmDelete) {
+		console.log(body, confirmDelete);
+		const request = { method: 'POST', url: '/todo/delete-list', 'content-type': 'application/json' }
+		xhrRequest(request, loadTodo, body);
+	}
 };
 
 const main = () => {
