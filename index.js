@@ -7,8 +7,8 @@ const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) =>
   fs.writeFileSync(fileName, content, 'utf-8');
 
-const main = (PORT) => {
-  const { STATIC_ROOT, TEMPLATE_ROOT,
+const main = () => {
+  const { STATIC_ROOT, TEMPLATE_ROOT, PORT,
     COOKIE_NAME, COOKIE_KEY, TODO_FILE_PATH, USERS_FILE_PATH } = process.env;
 
   const appConfig = {
@@ -24,4 +24,4 @@ const main = (PORT) => {
   app.listen(PORT, () => console.log(`listening to ${PORT}`));
 };
 
-main(8080);
+main();

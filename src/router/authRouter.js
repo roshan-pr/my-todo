@@ -23,9 +23,8 @@ const createAuthRouter = (todoFilePath, usersFilePath, readFile, writeFile) => {
     persistTodo(todoFilePath, writeFile),
     persistUsers(usersFilePath, writeFile),
     assignSession, redirectToTodo);
-  // serveLoginPage('Successfully registered'));
 
-  authRouter.get('/signup', serveSignupPage());
+  authRouter.get('/signup', authSession, serveSignupPage());
   return authRouter;
 }
 
