@@ -5,13 +5,10 @@ const { loadTodo } = require('./middleware/loadTodo.js');
 const { loadUsers } = require('./middleware/loadUsers.js');
 
 const { logout } = require('./handler/logout.js');
+const { notFoundHandler } = require('./handler/notFoundHandler.js');
 
 const createAuthRouter = require('./handler/authentication.js');
 const createTodoRouter = require('./handler/todo.js');
-
-const notFoundHandler = (req, res) => {
-  res.status(404).end(`${req.url} not found`);
-};
 
 const verifyUser = (req, res, next) => {
   if (!req.session.isPopulated) {

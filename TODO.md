@@ -1,13 +1,14 @@
 # DOING
 
+  - [ ] Separate handlers and routers
 
 # TODO
 
-  - [ ] Parameterize logger middleware
   - [ ] Try dotenv
 
 # Done
 
+  - [ ] ~~~Parameterize logger middleware~~~
   - [x] Wire up the sign-in page
   - [x] Implement server
     - [x] Create app with end points
