@@ -17,10 +17,10 @@ const generateHtml = ([tag, attribute, ...rest]) => {
 const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
-		const dom = ['div', { class: 'item', id: id }, ['div', {},
-			['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
-			['label', {}, description]],
-			['label', { class: 'delete-item fa-solid fa-trash-arrow-up', onclick: 'deleteItem(event)' }, '']
+		const dom = ['div', { class: 'item', id: id },
+			['div', { class: 'checkbox' }, ['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
+				['div', { class: 'description' }, description]],
+			['div', { class: 'delete-item fa-solid fa-trash-arrow-up', onclick: 'deleteItem(event)' }, '']
 		]
 		return generateHtml(dom);
 	});
@@ -39,7 +39,7 @@ const createAList = ({ id, title, items }) => {
 			['div', { class: 'items' }, createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
 			['div', { class: 'input-text', style: 'display:flex' },
-				['input', { type: 'text', name: 'description', id: 'add-item', placeholder: '...add item', required: '' }, ''],
+				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: '' }, ''],
 				['button', { type: 'submit', name: 'submit', id: 'add-item' }, 'Submit']
 			]],
 	];
@@ -50,12 +50,11 @@ const createAddListTemplate = () => {
 	const dom = ['div', { class: 'dummy-list' },
 		['div', { class: 'add-item', style: 'width:100%' },
 			['form', { onsubmit: 'addList(event)' },
-				['input', {
-					type: 'text', name: 'title',
-					id: 'add-list', placeholder: '... add list', style: 'width:100%'
-				}, '']]],
-		['div', { class: 'icon' }, createImgTag({ id: 'add', src: '/icons/add.png', alt: 'add' })],
-		['span', {}, 'Add more lists']
+				['div', { class: 'input-text', style: 'display:flex' },
+					['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', style: 'width:100%' }, ''],
+					['button', { type: 'submit', name: 'submit', id: 'add-list' }, 'Submit']
+				]]
+		]
 	];
 	return generateHtml(dom);
 };
@@ -74,9 +73,9 @@ const renderLists = ({ response }) => {
 	const defaultRes = { lists: [], username: 'unknown' }
 	const { lists, username } = response ? JSON.parse(response) : defaultRes;
 	console.log(lists);
-	let htmlLists = lists.map(createAList).join('');
+	let htmlLists = createAddListTemplate();
+	htmlLists += lists.map(createAList).join('');
 
-	htmlLists += createAddListTemplate();
 
 	const mainElementView = document.querySelector('main');
 	mainElementView.innerHTML = htmlLists;

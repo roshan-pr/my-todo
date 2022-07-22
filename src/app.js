@@ -10,7 +10,7 @@ const createAuthRouter = require('./handler/authentication.js');
 const createTodoRouter = require('./handler/todo.js');
 
 const notFoundHandler = (req, res) => {
-  res.status(404).end(`${req.url} Not Found`);
+  res.status(404).end(`${req.url} not found`);
 };
 
 const verifyUser = (req, res, next) => {
@@ -27,7 +27,9 @@ const createApp = (config, session, readFile, writeFile) => {
   const { staticRoot, todoFilePath, usersFilePath } = config;
 
   const app = express();
-  app.use(morgan('tiny'));
+  if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('tiny'));
+  }
   app.use(express.json());
 
   app.use(express.urlencoded({ extended: true }));
@@ -37,7 +39,6 @@ const createApp = (config, session, readFile, writeFile) => {
 
   app.use(/^\/$/, verifyUser);
   app.use(createAuthRouter(todoFilePath, usersFilePath, readFile, writeFile));
-  // app.use((req, res, next) => { console.log(req.body); next(); });
 
   app.use('/todo', createTodoRouter(config, readFile, writeFile));
   app.use('/logout', logout);

@@ -16,9 +16,9 @@ const serveSignupPage = (req, res) => {
   return;
 };
 
-const serveSignupSuccessful = (req, res) => {
-  const signupPage = createSignUpPage('Successfully registered');
-  res.end(signupPage);
+const serveLoginSuccessful = (req, res) => {
+  const loginPage = createLoginPage('Successfully registered');
+  res.end(loginPage);
   return;
 };
 
@@ -50,7 +50,7 @@ const createAuthRouter = (todoFilePath, usersFilePath, readFile, writeFile) => {
   authRouter.post('/signup', signUpUser,
     persistTodo(todoFilePath, writeFile),
     persistUsers(usersFilePath, writeFile),
-    serveSignupSuccessful);
+    serveLoginSuccessful);
 
   authRouter.get('/signup', serveSignupPage);
   return authRouter;

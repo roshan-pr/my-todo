@@ -1,10 +1,11 @@
 const express = require('express');
+const { createHomePage } = require('../view/todo.js');
 
-const serveTodoPage = (templateRoot, readFile) =>
-  (req, res, next) => {
-    const todoPage = readFile(templateRoot + '/todo.html');
-    res.end(todoPage);
-  };
+const serveTodoPage = (req, res) => {
+  const username = req.session.name;
+  const todoPage = createHomePage(username);
+  res.end(todoPage);
+};
 
 const serveTodoLists = (req, res) => {
   const username = req.session.name;
@@ -32,7 +33,7 @@ const addList = (req, res, next) => {
   const newListId = lastListId + 1;
   const newList = createList(newListId, title);
 
-  lists.push(newList); // Updating the memory
+  lists.unshift(newList); // Updating the memory
   todo[username] = { lastListId: newListId, lists }
   next();
 };
@@ -126,7 +127,7 @@ const createTodoRouter = (config, readFile, writeFile) => {
 
   const todoRouter = express.Router();
   // todoRouter.use(verifyUser);
-  todoRouter.get('/', verifyUser, serveTodoPage(templateRoot, readFile));
+  todoRouter.get('/', verifyUser, serveTodoPage);
   todoRouter.get('/api', serveTodoLists);
   todoRouter.post('/add-list', addList, persistTodo(todoFilePath, writeFile));
   todoRouter.post('/add-item', addItem, persistTodo(todoFilePath, writeFile));

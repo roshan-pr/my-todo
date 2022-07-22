@@ -15,7 +15,6 @@ const appConfig = {
 };
 
 const session = { name: 'session', keys: ['superKey'] };
-// const users = { 'ram': { name: 'ram', password: '123' } };
 
 const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
@@ -23,11 +22,11 @@ const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'ut
 initTestData(); // Start with default data set.
 
 describe('/unknown', () => {
-  it.only('Should serve file not found', (done) => {
+  it('Should serve file not found', (done) => {
     const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/unknown')
-      .expect('file not found')
+      .expect('/unknown not found')
       .expect(404, done)
   });
 });

@@ -15,7 +15,7 @@ const signUpUser = (req, res, next) => {
   if (isUsernameExists(req)) {
     serveErrorPage(res);
     return;
-  }
+  };
   const { users, body: { name, password } } = req;
   users[name] = { name, password };
 
