@@ -21,8 +21,11 @@ README
 ```
 
 ```
-clone todo git repository
 
-npm setup
+Clone todo git repository
+
+npm install
 npm start
+
+npm test // For tests
 ```

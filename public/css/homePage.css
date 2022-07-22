@@ -90,6 +90,10 @@ form {
 
 }
 
+.delete-item {
+    visibility: hidden;
+}
+
 .item:hover .delete-item {
     visibility: visible;
 }

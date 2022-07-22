@@ -61,11 +61,21 @@ describe('/login', () => {
 });
 
 describe('/signup', () => {
-  it('Should serve login page', (done) => {
+  it('Should serve signup page', (done) => {
     const app = createApp(appConfig, session, readFile);
     request(app)
       .get('/signup')
       .expect(/Signup Page/)
+      .expect(200, done)
+  });
+
+  it('Should serve same page with error message', (done) => {
+    const app = createApp(appConfig, session, readFile);
+    request(app)
+      .post('/signup')
+      .send('name=ram&password=123')
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .expect(/Username exists, try another name./)
       .expect(200, done)
   });
 });

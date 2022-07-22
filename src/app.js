@@ -3,22 +3,13 @@ const morgan = require('morgan');
 const cookieSession = require('cookie-session');
 const { loadTodo } = require('./middleware/loadTodo.js');
 const { loadUsers } = require('./middleware/loadUsers.js');
+const { ensureLogin } = require('./middleware/ensureLogin.js');
 
 const { logout } = require('./handler/logout.js');
 const { notFoundHandler } = require('./handler/notFoundHandler.js');
 
-const createAuthRouter = require('./handler/authentication.js');
+const createAuthRouter = require('./router/authRouter.js');
 const createTodoRouter = require('./handler/todo.js');
-
-const verifyUser = (req, res, next) => {
-  if (!req.session.isPopulated) {
-    console.log(req.session);
-    res.redirect('/login');
-    return;
-  }
-  req.url = '/todo';
-  next();
-};
 
 const createApp = (config, session, readFile, writeFile) => {
   const { staticRoot, todoFilePath, usersFilePath } = config;
@@ -34,7 +25,7 @@ const createApp = (config, session, readFile, writeFile) => {
   app.use(loadUsers(usersFilePath, readFile));
   app.use(loadTodo(todoFilePath, readFile));
 
-  app.use(/^\/$/, verifyUser);
+  app.use(/^\/$/, ensureLogin);
   app.use(createAuthRouter(todoFilePath, usersFilePath, readFile, writeFile));
 
   app.use('/todo', createTodoRouter(config, readFile, writeFile));

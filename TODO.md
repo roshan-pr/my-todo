@@ -8,6 +8,7 @@
 
 # Done
 
+  - [x] Separate authRouter handlers and middleware
   - [ ] ~~~Parameterize logger middleware~~~
   - [x] Wire up the sign-in page
   - [x] Implement server
