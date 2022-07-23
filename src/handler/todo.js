@@ -1,4 +1,5 @@
 const express = require('express');
+const { loadTodo } = require('../middleware/loadTodo.js');
 const { createHomePage } = require('../view/todo.js');
 
 const serveTodoPage = (req, res) => {
@@ -10,108 +11,89 @@ const serveTodoPage = (req, res) => {
 const serveTodoLists = (req, res) => {
   const username = req.session.name;
   if (username) {
-    const response = { lists: req.todo[username].lists, username };
-    res.json(response);
+    const { lists } = req.todoRecord.getInfo();
+    res.json({ lists, username });
     return;
   }
   res.sendStatus(401);
 };
 
-const createList = (id, title) => {
-  return { id, lastItemId: 0, title, items: [] }
-};
-
-const createItem = (id, description) => {
-  return { id, description, status: false };
-};
-
 const addList = (req, res, next) => {
-  const username = req.session.name;
-  const todo = req.todo;
-  const { lastListId, lists } = todo[username];
-  const { title } = req.body;
-  const newListId = lastListId + 1;
-  const newList = createList(newListId, title);
+  const todoRecord = req.todoRecord;
 
-  lists.unshift(newList); // Updating the memory
-  todo[username] = { lastListId: newListId, lists }
+  let status = false;
+  const { title } = req.body;
+  if (todoRecord.addList(title)) {
+    // console.log('Successfully added list:', title);
+    todoRecord.save();
+    status = true;
+  };
+  req.todoStatus = status;
   next();
 };
 
 const addItem = (req, res, next) => {
-  const username = req.session.name;
-  const todo = req.todo[username];
+  const todoRecord = req.todoRecord;
+
+  let status = false;
   const { listId, description } = req.body;
-
-  const list = todo.lists.find((list) => list.id === +listId);
-
-  const newItemId = list.lastItemId + 1;
-  const item = createItem(newItemId, description);
-
-  list.items.push(item); // Updating in memory
-  list.lastItemId = newItemId;
-  req.todo[username] = todo;
+  if (todoRecord.addItem(listId, description)) {
+    // console.log('Successfully added task:', description);
+    todoRecord.save();
+    status = true;
+  };
+  req.todoStatus = status;
   next();
 };
 
 const markItem = (req, res, next) => {
-  const username = req.session.name;
-  const todo = req.todo[username];
+  const todoRecord = req.todoRecord;
+
+  let todoStatus = false;
   const { listId, itemId, status } = req.body;
-
-  const list = todo.lists.find(list => list.id === +listId);
-  const item = list.items.find(item => item.id === +itemId);
-
-  item.status = status; // Updating in memory
-  req.todo[username] = todo;
+  if (todoRecord.markItem(listId, itemId, status)) {
+    // console.log('Successfully marked item', itemId, status);
+    todoRecord.save();
+    todoStatus = true;
+  };
+  req.todoStatus = todoStatus;
   next();
 };
 
-const getElementIndex = (array, id) => {
-  let index = 0;
-  while (index < array.length) {
-    if (array[index].id === id)
-      return index;
-    index++;
-  }
-  return -1;
-};
-
 const deleteList = (req, res, next) => {
-  const username = req.session.name;
-  const todo = req.todo[username];
-  const { listId } = req.body;
+  const todoRecord = req.todoRecord;
 
-  const listIndex = getElementIndex(todo.lists, +listId);
-  if (listIndex >= 0) {
-    todo.lists.splice(listIndex, 1);
+  let todoStatus = false;
+  const { listId } = req.body;
+  if (todoRecord.deleteList(listId)) {
+    // console.log('Successfully deleted', listId);
+    todoRecord.save();
+    todoStatus = true;
   };
-  req.todo[username] = todo;
+  req.todoStatus = todoStatus;
   next();
 };
 
 const deleteItem = (req, res, next) => {
-  const username = req.session.name;
-  const todo = req.todo[username];
-  const { listId, itemId } = req.body;
-  const list = todo.lists.find((list) => list.id === +listId);
+  const todoRecord = req.todoRecord;
 
-  const itemIndex = getElementIndex(list.items, +itemId);
-  if (itemIndex >= 0) {
-    list.items.splice(itemIndex, 1);
+  let todoStatus = false;
+  const { listId, itemId } = req.body;
+  if (todoRecord.deleteItem(listId, itemId)) {
+    // console.log('Successfully deleted', listId, 'from', listId);
+    todoRecord.save();
+    todoStatus = true;
   };
-  req.todo[username] = todo;
+  req.todoStatus = todoStatus;
   next();
 };
 
-
-const persistTodo = (todoFilePath, writeFile) => (req, res) => {
-  try {
-    writeFile(todoFilePath, JSON.stringify(req.todo));
+const persistTodoRecord = (req, res) => {
+  if (req.todoStatus) {
     res.sendStatus(200);
-  } catch (error) {
-    res.status(500).end('Something went wrong');
+    return;
   }
+  res.status(500).end('Something went wrong');
 };
 
 const verifyUser = (req, res, next) => {
@@ -122,18 +104,17 @@ const verifyUser = (req, res, next) => {
   next();
 };
 
-const createTodoRouter = (config, readFile, writeFile) => {
-  const { templateRoot, todoFilePath } = config;
-
+const createTodoRouter = (todoFilePath, readFile, writeFile) => {
   const todoRouter = express.Router();
-  // todoRouter.use(verifyUser);
+  todoRouter.use(loadTodo(todoFilePath, readFile, writeFile));
+
   todoRouter.get('/', verifyUser, serveTodoPage);
   todoRouter.get('/api', serveTodoLists);
-  todoRouter.post('/add-list', addList, persistTodo(todoFilePath, writeFile));
-  todoRouter.post('/add-item', addItem, persistTodo(todoFilePath, writeFile));
-  todoRouter.post('/mark-item', markItem, persistTodo(todoFilePath, writeFile));
-  todoRouter.post('/delete-list', deleteList, persistTodo(todoFilePath, writeFile));
-  todoRouter.post('/delete-item', deleteItem, persistTodo(todoFilePath, writeFile));
+  todoRouter.post('/add-list', addList, persistTodoRecord);
+  todoRouter.post('/add-item', addItem, persistTodoRecord);
+  todoRouter.post('/mark-item', markItem, persistTodoRecord);
+  todoRouter.post('/delete-list', deleteList, persistTodoRecord);
+  todoRouter.post('/delete-item', deleteItem, persistTodoRecord);
 
   return todoRouter;
 }

@@ -31,7 +31,7 @@ const createCheckbox = (items, listId) => {
 			['div', { className: 'checkbox' },
 				['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
 				['div', { className: 'description' }, description]],
-			['div', { className: 'delete-item fa-solid fa-trash-arrow-up', onclick: deleteItem }, '']
+			['div', { className: 'delete-item fa-solid fa-trash', onclick: deleteItem }, '']
 		]
 		return dom;
 	});
@@ -50,7 +50,7 @@ const createAList = ({ id, title, items }) => {
 			['div', { className: 'items' }, ...createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
 			['div', { className: 'input-text', style: 'display:flex' },
-				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: '' }, ''],
+				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: true }, ''],
 				['button', { type: 'submit', name: 'submit', id: 'add-item-btn' }, 'Add']
 			]],
 	];
@@ -60,8 +60,8 @@ const createAList = ({ id, title, items }) => {
 const createTemplateList = () => {
 	const dom = ['div', { className: 'create-list' },
 		['form', { onsubmit: addList },
-			['div', { className: ' list-header input-text', style: 'display:flex' },
-				['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', style: 'width:100%' }, ''],
+			['div', { className: ' list-header input-text' },
+				['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', required: true }, ''],
 			]],
 		['div', { className: 'add-icon', onclick: showAddList },
 			['div', { className: 'fa-solid fa-plus' }, ''],

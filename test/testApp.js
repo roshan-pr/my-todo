@@ -23,7 +23,7 @@ initTestData(); // Start with default data set.
 
 describe('/unknown', () => {
   it('Should serve file not found', (done) => {
-    const app = createApp(appConfig, session, readFile);
+    const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .get('/unknown')
       .expect('/unknown not found')
@@ -31,7 +31,7 @@ describe('/unknown', () => {
   });
 });
 
-describe('/login', () => {
+describe('GET /login', () => {
   it('Should serve login page', (done) => {
     const app = createApp(appConfig, session, readFile);
     request(app)
@@ -39,7 +39,9 @@ describe('/login', () => {
       .expect(/Login Page/)
       .expect(200, done)
   });
+});
 
+describe('POST /login', () => {
   it('Should redirect to todo, --valid user', (done) => {
     const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
@@ -49,7 +51,6 @@ describe('/login', () => {
       .expect('location', '/todo')
       .expect(302, done)
   });
-
   it('Should serve error page, --unauthorized user', (done) => {
     const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
@@ -60,17 +61,19 @@ describe('/login', () => {
   });
 });
 
-describe('/signup', () => {
+describe('GET /signup', () => {
   it('Should serve signup page', (done) => {
-    const app = createApp(appConfig, session, readFile);
+    const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .get('/signup')
       .expect(/Signup Page/)
       .expect(200, done)
   });
+});
 
+describe('POST /signup', () => {
   it('Should serve same page with error message', (done) => {
-    const app = createApp(appConfig, session, readFile);
+    const app = createApp(appConfig, session, readFile, writeFile);
     request(app)
       .post('/signup')
       .send('name=ram&password=123')
@@ -80,7 +83,7 @@ describe('/signup', () => {
   });
 });
 
-describe('/todo', () => {
+describe('GET /todo', () => {
   let app;
   let cookie;
   beforeEach((done) => {
@@ -102,32 +105,96 @@ describe('/todo', () => {
       .expect(/Todo Page/)
       .expect(200, done)
   });
+});
 
-  it('Should serve todo records for valid user /todo/api', (done) => {
+describe('GET /todo/api', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should serve todo records for valid user.', (done) => {
     request(app)
       .get('/todo/api')
       .set('cookie', cookie)
       .expect(/"username":"ram"/)
       .expect(200, done)
   });
+});
 
-  it('Should update todo records for valid user /todo/add-list', (done) => {
+describe('POST /todo/add-list', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should update todo records for valid user.', (done) => {
     request(app)
       .post('/todo/add-list')
       .set('cookie', cookie)
       .send('title=party')
       .expect(200, done)
   });
+});
 
-  it('Should add todo records for valid user /todo/add-item', (done) => {
+describe('POST /todo/add-item', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should add todo records for valid user.', (done) => {
     request(app)
       .post('/todo/add-item')
       .set('cookie', cookie)
       .send('listId=1&description=Buy cake')
       .expect(200, done)
   });
+});
 
-  it('Should mark todo record for valid user /todo/mark-item', (done) => {
+describe('POST /todo/mark-item', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should mark todo record for valid user.', (done) => {
     request(app)
       .post('/todo/mark-item')
       .set('cookie', cookie)
@@ -135,8 +202,24 @@ describe('/todo', () => {
       .send(JSON.stringify({ listId: 1, itemId: 1, status: true }))
       .expect(200, done)
   });
+});
 
-  it('Should delete todo list for valid user /todo/delete-list', (done) => {
+describe('POST /todo/delete-list', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should delete todo list for valid user.', (done) => {
     request(app)
       .post('/todo/delete-list')
       .set('cookie', cookie)
@@ -144,8 +227,23 @@ describe('/todo', () => {
       .send(JSON.stringify({ listId: 1 }))
       .expect(200, done)
   });
+});
+describe('POST /todo/delete-item', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
 
-  it('Should delete todo item for valid user /todo/delete-list', (done) => {
+  it('Should delete todo item for valid user.', (done) => {
     request(app)
       .post('/todo/delete-item')
       .set('cookie', cookie)
@@ -155,7 +253,7 @@ describe('/todo', () => {
   });
 });
 
-describe('/logout', () => {
+describe('GET /logout', () => {
   it('Should logout the user and redirect to login page', (done) => {
     const app = createApp(appConfig, session, readFile);
     request(app)
