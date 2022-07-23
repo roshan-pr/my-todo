@@ -5,6 +5,9 @@
 # TODO
 
   - [ ] Try dotenv
+  - [ ] Introduce class for todo list
+  - [ ] Style the list template.
+  - [ ] Make username case insensitive, Persist username in lowercase.
 
 # Done
 

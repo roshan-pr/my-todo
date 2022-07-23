@@ -1,44 +1,55 @@
-createElement = (tag, attributes, content) => {
-	let properties = '';
+const createElement = (tag, attributes, ...content) => {
+	const tagView = document.createElement(tag);
+
 	for (const key in attributes) {
-		properties += attributes[key] ? `${key}="${attributes[key]}"` : key;
+		tagView[key] = attributes[key];
 	}
-	return `<${tag} ${properties}>${content}</${tag}>`;
+
+	content.forEach(element => {
+		if (typeof element === 'object') {
+			tagView.appendChild(element);
+			return;
+		}
+		tagView.innerText = element;
+	});
+
+	return tagView;
 };
 
-const generateHtml = ([tag, attribute, ...rest]) => {
+const generateHtml = ([tag, attributes, ...rest]) => {
 	const childElements = rest.map(element =>
 		Array.isArray(element) ? generateHtml(element) : element
-	).join('');
+	);
 
-	return createElement(tag, attribute, childElements);
+	return createElement(tag, attributes, ...childElements);
 };
 
 const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
-		const dom = ['div', { class: 'item', id: id },
-			['div', { class: 'checkbox' }, ['input', { type: "checkbox", id: id, onclick: 'markItem(event)', [state]: '' }, ''],
-				['div', { class: 'description' }, description]],
-			['div', { class: 'delete-item fa-solid fa-trash-arrow-up', onclick: 'deleteItem(event)' }, '']
+		const dom = ['div', { className: 'item', id: id },
+			['div', { className: 'checkbox' },
+				['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
+				['div', { className: 'description' }, description]],
+			['div', { className: 'delete-item fa-solid fa-trash-arrow-up', onclick: deleteItem }, '']
 		]
-		return generateHtml(dom);
+		return dom;
 	});
-	return checkboxes.join('');
+	return checkboxes;
 };
 
 const createImgTag = attributes => createElement('img', attributes, '');
 
 const createAList = ({ id, title, items }) => {
-	const dom = ['div', { class: 'list', id },
-		['div', { class: 'list-header' },
-			['div', { class: 'title' }, title],
-			['div', { class: 'icon fa-solid fa-trash-arrow-up', onclick: 'deleteList(event)', }, '']
+	const dom = ['div', { className: 'list', id },
+		['div', { className: 'list-header' },
+			['div', { className: 'title' }, title],
+			['div', { className: 'icon fa-solid fa-trash-arrow-up', onclick: deleteList, }, '']
 		],
-		['form', { action: '/todo/add-item', id, method: 'post', onsubmit: 'addItem(event)' },
-			['div', { class: 'items' }, createCheckbox(items, id)],
+		['form', { action: '/todo/add-item', id, method: 'post', onsubmit: addItem },
+			['div', { className: 'items' }, ...createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
-			['div', { class: 'input-text', style: 'display:flex' },
+			['div', { className: 'input-text', style: 'display:flex' },
 				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: '' }, ''],
 				['button', { type: 'submit', name: 'submit', id: 'add-item' }, 'Submit']
 			]],
@@ -46,11 +57,11 @@ const createAList = ({ id, title, items }) => {
 	return generateHtml(dom);
 };
 
-const createAddListTemplate = () => {
-	const dom = ['div', { class: 'dummy-list' },
-		['div', { class: 'add-item', style: 'width:100%' },
-			['form', { onsubmit: 'addList(event)' },
-				['div', { class: 'input-text', style: 'display:flex' },
+const createTemplateList = () => {
+	const dom = ['div', { className: 'dummy-list' },
+		['div', { className: 'add-item', style: 'width:100%' },
+			['form', { onsubmit: addList },
+				['div', { className: 'input-text', style: 'display:flex' },
 					['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', style: 'width:100%' }, ''],
 					['button', { type: 'submit', name: 'submit', id: 'add-list' }, 'Submit']
 				]]
@@ -72,13 +83,14 @@ const xhrRequest = (request, cb, body = '') => {
 const renderLists = ({ response }) => {
 	const defaultRes = { lists: [], username: 'unknown' }
 	const { lists, username } = response ? JSON.parse(response) : defaultRes;
-	console.log(lists);
-	let htmlLists = createAddListTemplate();
-	htmlLists += lists.map(createAList).join('');
+	const mainViewElement = document.querySelector('main');
+	mainViewElement.innerHTML = '';
+	mainViewElement.append(createTemplateList());
 
-
-	const mainElementView = document.querySelector('main');
-	mainElementView.innerHTML = htmlLists;
+	const listViews = lists.map(createAList);
+	listViews.forEach(list =>
+		mainViewElement.appendChild(list)
+	);
 };
 
 const loadTodo = () => {
@@ -103,7 +115,6 @@ const deleteList = (event) => {
 	const body = JSON.stringify({ listId });
 	const confirmDelete = confirm('Delete this List');
 	if (confirmDelete) {
-		console.log(body, confirmDelete);
 		const request = { method: 'POST', url: '/todo/delete-list', 'content-type': 'application/json' }
 		xhrRequest(request, loadTodo, body);
 	}
