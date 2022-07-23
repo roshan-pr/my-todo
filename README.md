@@ -19,6 +19,24 @@ README
 * Delete a todo list.
 
 ```
+23/07/2022
+```
+* Edit title.
+    Allow the user to edit the title of a todo list
+    
+* Edit tasks.
+    Allow the user to edit tasks within a todo list(change text)
+    
+* Search by title.
+    Allow the user to search all todo lists by their title
+    
+* Search by task.
+    Allow the user to search todo tasks across _all_ lists
+    
+* Search by completion.
+    Allow the user to search for all todo tasks that are marked as being done.
+    
+```
 
 ```
 
