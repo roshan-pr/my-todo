@@ -8,14 +8,13 @@ const saveTodo = (todo, username, todoFilePath, writeFile) =>
   };
 
 const loadTodo = (todoFilePath, readFile, writeFile) => {
-  const todo = JSON.parse(readFile(todoFilePath)) || {};
-
   return (req, res, next) => {
+    const todo = JSON.parse(readFile(todoFilePath)) || {};
     const username = req.session.name;
     const { lastListId, lists } = todo[username];
     const todoSaver = saveTodo(todo, username, todoFilePath, writeFile);
     const todoRecord = new Todo(lastListId, lists, todoSaver);
-    // req.todo = todo;
+    req.todo = todo;
     req.todoRecord = todoRecord;
     next();
   };

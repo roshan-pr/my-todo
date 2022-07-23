@@ -1,25 +1,29 @@
 const fs = require('fs');
 const request = require('supertest');
 const { createApp } = require('../src/app.js');
+require('dotenv').config({ path: './test/.env_test' })
+
+const { STATIC_ROOT, TEMPLATE_ROOT, COOKIE_NAME,
+  COOKIE_KEY, TODO_FILE_PATH, USERS_FILE_PATH } = process.env;
 
 const initTestData = () => {
-  fs.copyFileSync('test/db/initTodo.json', 'test/db/todo.json');
-  fs.copyFileSync('test/db/initUsers.json', 'test/db/users.json');
+  fs.copyFileSync('test/db/initTodo.json', TODO_FILE_PATH);
+  fs.copyFileSync('test/db/initUsers.json', USERS_FILE_PATH);
 };
+
+initTestData(); // Start with default data set.
 
 const appConfig = {
-  staticRoot: 'public',
-  templateRoot: 'src/view',
-  todoFilePath: 'test/db/todo.json',
-  usersFilePath: 'test/db/users.json'
+  staticRoot: STATIC_ROOT,
+  templateRoot: TEMPLATE_ROOT,
+  todoFilePath: TODO_FILE_PATH,
+  usersFilePath: USERS_FILE_PATH
 };
 
-const session = { name: 'session', keys: ['superKey'] };
+const session = { name: COOKIE_NAME, keys: [COOKIE_KEY] }
 
 const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
-
-initTestData(); // Start with default data set.
 
 describe('/unknown', () => {
   it('Should serve file not found', (done) => {
