@@ -1,16 +1,16 @@
 # DOING
 
+  - [ ] Introduce class for todo list
   - [ ] Separate handlers and routers
 
 # TODO
 
   - [ ] Try dotenv
-  - [ ] Introduce class for todo list
-  - [ ] Style the list template.
   - [ ] Make username case insensitive, Persist username in lowercase.
 
 # Done
 
+  - [x] Style the list template.
   - [x] Separate authRouter handlers and middleware
   - [ ] ~~~Parameterize logger middleware~~~
   - [x] Wire up the sign-in page

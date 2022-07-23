@@ -44,30 +44,38 @@ const createAList = ({ id, title, items }) => {
 	const dom = ['div', { className: 'list', id },
 		['div', { className: 'list-header' },
 			['div', { className: 'title' }, title],
-			['div', { className: 'icon fa-solid fa-trash-arrow-up', onclick: deleteList, }, '']
+			['div', { className: 'icon fa-solid fa-trash', onclick: deleteList, }, '']
 		],
-		['form', { action: '/todo/add-item', id, method: 'post', onsubmit: addItem },
+		['form', { id, onsubmit: addItem },
 			['div', { className: 'items' }, ...createCheckbox(items, id)],
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
 			['div', { className: 'input-text', style: 'display:flex' },
 				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: '' }, ''],
-				['button', { type: 'submit', name: 'submit', id: 'add-item' }, 'Submit']
+				['button', { type: 'submit', name: 'submit', id: 'add-item-btn' }, 'Add']
 			]],
 	];
 	return generateHtml(dom);
 };
 
 const createTemplateList = () => {
-	const dom = ['div', { className: 'dummy-list' },
-		['div', { className: 'add-item', style: 'width:100%' },
-			['form', { onsubmit: addList },
-				['div', { className: 'input-text', style: 'display:flex' },
-					['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', style: 'width:100%' }, ''],
-					['button', { type: 'submit', name: 'submit', id: 'add-list' }, 'Submit']
-				]]
+	const dom = ['div', { className: 'create-list' },
+		['form', { onsubmit: addList },
+			['div', { className: ' list-header input-text', style: 'display:flex' },
+				['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', style: 'width:100%' }, ''],
+			]],
+		['div', { className: 'add-icon', onclick: showAddList },
+			['div', { className: 'fa-solid fa-plus' }, ''],
+			['span', {}, 'click to add more']
 		]
 	];
 	return generateHtml(dom);
+};
+
+const showAddList = (event) => {
+	const form = document.querySelector('.create-list>form');
+	form.style.visibility = 'visible';
+	const textBox = document.getElementById('add-list');
+	textBox.focus();
 };
 
 const xhrRequest = (request, cb, body = '') => {
