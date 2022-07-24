@@ -86,7 +86,8 @@ const deleteItem = (req, res, next) => {
 const persistTodoRecord = (req, res) => {
   try {
     req.todoRecord.save();
-    res.setStatus(200);
+    res.sendStatus(200);
+    return;
   } catch (err) {
     res.status(500).json({ err: 'persisting error' });
   }
@@ -102,9 +103,9 @@ const verifyUser = (req, res, next) => {
 
 const createTodoRouter = (todoFilePath, readFile, writeFile) => {
   const todoRouter = express.Router();
-  todoRouter.use(loadTodo(todoFilePath, readFile, writeFile));
+  todoRouter.use(verifyUser, loadTodo(todoFilePath, readFile, writeFile));
 
-  todoRouter.get('/', verifyUser, serveTodoPage);
+  todoRouter.get('/', serveTodoPage);
   todoRouter.get('/api', serveTodoLists);
   todoRouter.post('/add-list', addList, persistTodoRecord);
   todoRouter.post('/add-item', addItem, persistTodoRecord);

@@ -26,6 +26,13 @@ const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
 
 describe('GET /todo', () => {
+  it('Should redirect to login page for invalid user', (done) => {
+    request(app)
+      .get('/todo')
+      .expect('location', '/login')
+      .expect(302, done)
+  });
+
   let app;
   let cookie;
   beforeEach((done) => {
@@ -74,6 +81,13 @@ describe('GET /todo/api', () => {
 });
 
 describe('POST /todo/add-list', () => {
+  it('Should redirect to login for invalid user.', (done) => {
+    request(app)
+      .post('/todo/add-list')
+      .expect('location', '/login')
+      .expect(302, done)
+  });
+
   let app;
   let cookie;
   beforeEach((done) => {
@@ -98,6 +112,13 @@ describe('POST /todo/add-list', () => {
 });
 
 describe('POST /todo/add-item', () => {
+  it('Should redirect to login for invalid user.', (done) => {
+    request(app)
+      .post('/todo/add-item')
+      .expect('location', '/login')
+      .expect(302, done)
+  });
+
   let app;
   let cookie;
   beforeEach((done) => {
@@ -122,6 +143,15 @@ describe('POST /todo/add-item', () => {
 });
 
 describe('POST /todo/mark-item', () => {
+  it('Should redirect to login for invalid user.', (done) => {
+    request(app)
+      .post('/todo/mark-item')
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 1, itemId: 1, status: true }))
+      .expect('location', '/login')
+      .expect(302, done)
+  });
+
   let app;
   let cookie;
   beforeEach((done) => {
@@ -171,7 +201,7 @@ describe('POST /todo/delete-list', () => {
   });
 });
 
-describe('POST /todo/delete-item', () => {
+describe.only('POST /todo/delete-item', () => {
   let app;
   let cookie;
   beforeEach((done) => {
@@ -193,5 +223,16 @@ describe('POST /todo/delete-item', () => {
       .set('content-type', 'application/json')
       .send(JSON.stringify({ listId: 1, itemId: 1 }))
       .expect(200, done)
+  });
+
+
+  it('Should give err for invalid details.', (done) => {
+    request(app)
+      .post('/todo/delete-item')
+      .set('cookie', cookie)
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 3, itemId: 3 }))
+      .expect(/err/)
+      .expect(400, done)
   });
 });

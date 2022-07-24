@@ -74,7 +74,7 @@ class Todo {
 
   deleteItem(listId, itemId) {
     const list = this.#getList(+listId);
-    const itemIndex = getElementIndex(list.items, +itemId);
+    const itemIndex = list && getElementIndex(list.items, +itemId);
 
     if (itemIndex >= 0) {
       list.items.splice(itemIndex, 1);

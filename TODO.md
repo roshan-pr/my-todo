@@ -1,10 +1,14 @@
 # DOING
 
-  - [ ] Separate handlers and routers
+  - [ ] Implement edit option for title
 
 # TODO
 
+  - [ ] Modify the template creation for new list
+  - [ ] Implement edit option for item
+
   - [ ] Make username case insensitive, Persist username in lowercase.
+  - [ ] Separate handlers and routers
 
 # Done
 
