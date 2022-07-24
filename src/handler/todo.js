@@ -21,79 +21,75 @@ const serveTodoLists = (req, res) => {
 const addList = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
-  let status = false;
   const { title } = req.body;
-  if (todoRecord.addList(title)) {
+  const modified = todoRecord.addList(title);
+  if (!modified) {
     // console.log('Successfully added list:', title);
-    todoRecord.save();
-    status = true;
+    res.status(400).json({ err: title + ' list cant be added' });
+    return;
   };
-  req.todoStatus = status;
   next();
 };
 
 const addItem = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
-  let status = false;
   const { listId, description } = req.body;
-  if (todoRecord.addItem(listId, description)) {
+  const modify = todoRecord.addItem(listId, description);
+  if (!modify) {
     // console.log('Successfully added task:', description);
-    todoRecord.save();
-    status = true;
+    res.status(400).json({ err: description + ' cant be added' });
+    return;
   };
-  req.todoStatus = status;
   next();
 };
 
 const markItem = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
-  let todoStatus = false;
   const { listId, itemId, status } = req.body;
-  if (todoRecord.markItem(listId, itemId, status)) {
+  const modified = todoRecord.markItem(listId, itemId, status);
+  if (!modified) {
     // console.log('Successfully marked item', itemId, status);
-    todoRecord.save();
-    todoStatus = true;
+    res.status(400).json({ err: 'cant change to ' + status });
+    return;
   };
-  req.todoStatus = todoStatus;
   next();
 };
 
 const deleteList = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
-  let todoStatus = false;
   const { listId } = req.body;
-  if (todoRecord.deleteList(listId)) {
+  const modified = todoRecord.deleteList(listId);
+  if (!modified) {
     // console.log('Successfully deleted', listId);
-    todoRecord.save();
-    todoStatus = true;
+    res.status(400).json({ err: 'cant delete this list' });
+    return;
   };
-  req.todoStatus = todoStatus;
   next();
 };
 
 const deleteItem = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
-  let todoStatus = false;
   const { listId, itemId } = req.body;
-  if (todoRecord.deleteItem(listId, itemId)) {
+  const modified = todoRecord.deleteItem(listId, itemId);
+  if (!modified) {
     // console.log('Successfully deleted', listId, 'from', listId);
-    todoRecord.save();
-    todoStatus = true;
+    res.status(400).json({ err: 'cant delete this item' });
+    return;
   };
-  req.todoStatus = todoStatus;
   next();
 };
 
 const persistTodoRecord = (req, res) => {
-  if (req.todoStatus) {
-    res.sendStatus(200);
-    return;
+  try {
+    req.todoRecord.save();
+    res.setStatus(200);
+  } catch (err) {
+    res.status(500).json({ err: 'persisting error' });
   }
-  res.status(500).end('Something went wrong');
 };
 
 const verifyUser = (req, res, next) => {
