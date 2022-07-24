@@ -1,29 +1,3 @@
-const createElement = (tag, attributes, ...content) => {
-	const tagView = document.createElement(tag);
-
-	for (const key in attributes) {
-		tagView[key] = attributes[key];
-	}
-
-	content.forEach(element => {
-		if (typeof element === 'object') {
-			tagView.appendChild(element);
-			return;
-		}
-		tagView.innerText = element;
-	});
-
-	return tagView;
-};
-
-const generateHtml = ([tag, attributes, ...rest]) => {
-	const childElements = rest.map(element =>
-		Array.isArray(element) ? generateHtml(element) : element
-	);
-
-	return createElement(tag, attributes, ...childElements);
-};
-
 const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
@@ -37,8 +11,6 @@ const createCheckbox = (items, listId) => {
 	});
 	return checkboxes;
 };
-
-const createImgTag = attributes => createElement('img', attributes, '');
 
 const createAList = ({ id, title, items }) => {
 	const dom = ['div', { className: 'list', id },

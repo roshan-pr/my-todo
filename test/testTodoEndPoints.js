@@ -25,68 +25,6 @@ const session = { name: COOKIE_NAME, keys: [COOKIE_KEY] }
 const readFile = fileName => fs.readFileSync(fileName, 'utf-8');
 const writeFile = (fileName, content) => fs.writeFileSync(fileName, content, 'utf-8');
 
-describe('/unknown', () => {
-  it('Should serve file not found', (done) => {
-    const app = createApp(appConfig, session, readFile, writeFile);
-    request(app)
-      .get('/unknown')
-      .expect('/unknown not found')
-      .expect(404, done)
-  });
-});
-
-describe('GET /login', () => {
-  it('Should serve login page', (done) => {
-    const app = createApp(appConfig, session, readFile);
-    request(app)
-      .get('/login')
-      .expect(/Login Page/)
-      .expect(200, done)
-  });
-});
-
-describe('POST /login', () => {
-  it('Should redirect to todo, --valid user', (done) => {
-    const app = createApp(appConfig, session, readFile, writeFile);
-    request(app)
-      .post('/login')
-      .send('name=ram&password=123')
-      .set('content-type', 'application/x-www-form-urlencoded')
-      .expect('location', '/todo')
-      .expect(302, done)
-  });
-  it('Should serve error page, --unauthorized user', (done) => {
-    const app = createApp(appConfig, session, readFile, writeFile);
-    request(app)
-      .post('/login')
-      .send('name=unknown&password=unknown')
-      .expect(/Invalid username or password/)
-      .expect(200, done)
-  });
-});
-
-describe('GET /signup', () => {
-  it('Should serve signup page', (done) => {
-    const app = createApp(appConfig, session, readFile, writeFile);
-    request(app)
-      .get('/signup')
-      .expect(/Signup Page/)
-      .expect(200, done)
-  });
-});
-
-describe('POST /signup', () => {
-  it('Should serve same page with error message', (done) => {
-    const app = createApp(appConfig, session, readFile, writeFile);
-    request(app)
-      .post('/signup')
-      .send('name=ram&password=123')
-      .set('content-type', 'application/x-www-form-urlencoded')
-      .expect(/Username exists, try another name./)
-      .expect(200, done)
-  });
-});
-
 describe('GET /todo', () => {
   let app;
   let cookie;
@@ -232,6 +170,7 @@ describe('POST /todo/delete-list', () => {
       .expect(200, done)
   });
 });
+
 describe('POST /todo/delete-item', () => {
   let app;
   let cookie;
@@ -254,15 +193,5 @@ describe('POST /todo/delete-item', () => {
       .set('content-type', 'application/json')
       .send(JSON.stringify({ listId: 1, itemId: 1 }))
       .expect(200, done)
-  });
-});
-
-describe('GET /logout', () => {
-  it('Should logout the user and redirect to login page', (done) => {
-    const app = createApp(appConfig, session, readFile);
-    request(app)
-      .get('/logout')
-      .expect('location', '/login')
-      .expect(302, done)
   });
 });
