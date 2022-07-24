@@ -37,10 +37,10 @@ const addItem = (req, res, next) => {
   const { listId, description } = req.body;
   const modify = todoRecord.addItem(listId, description);
   if (!modify) {
-    // console.log('Successfully added task:', description);
     res.status(400).json({ err: description + ' cant be added' });
     return;
   };
+  // console.log('Successfully added task:', description);
   next();
 };
 
@@ -50,10 +50,23 @@ const markItem = (req, res, next) => {
   const { listId, itemId, status } = req.body;
   const modified = todoRecord.markItem(listId, itemId, status);
   if (!modified) {
-    // console.log('Successfully marked item', itemId, status);
     res.status(400).json({ err: 'cant change to ' + status });
     return;
   };
+  // console.log('Successfully marked item', itemId, status);
+  next();
+};
+
+const editList = (req, res, next) => {
+  const todoRecord = req.todoRecord;
+
+  const { listId, title } = req.body;
+  const modified = todoRecord.editList(listId, title);
+  if (!modified) {
+    res.status(400).json({ err: 'cant edit this list' });
+    return;
+  };
+  // console.log('Successfully deleted', listId);
   next();
 };
 
@@ -63,10 +76,10 @@ const deleteList = (req, res, next) => {
   const { listId } = req.body;
   const modified = todoRecord.deleteList(listId);
   if (!modified) {
-    // console.log('Successfully deleted', listId);
     res.status(400).json({ err: 'cant delete this list' });
     return;
   };
+  // console.log('Successfully deleted', listId);
   next();
 };
 
@@ -76,10 +89,10 @@ const deleteItem = (req, res, next) => {
   const { listId, itemId } = req.body;
   const modified = todoRecord.deleteItem(listId, itemId);
   if (!modified) {
-    // console.log('Successfully deleted', listId, 'from', listId);
     res.status(400).json({ err: 'cant delete this item' });
     return;
   };
+  // console.log('Successfully deleted', listId, 'from', listId);
   next();
 };
 
@@ -112,6 +125,8 @@ const createTodoRouter = (todoFilePath, readFile, writeFile) => {
   todoRouter.post('/mark-item', markItem, persistTodoRecord);
   todoRouter.post('/delete-list', deleteList, persistTodoRecord);
   todoRouter.post('/delete-item', deleteItem, persistTodoRecord);
+
+  todoRouter.post('/edit-list', editList, persistTodoRecord);
 
   return todoRouter;
 }

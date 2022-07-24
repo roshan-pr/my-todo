@@ -72,6 +72,15 @@ class Todo {
     return false;
   };
 
+  editList(listId, title) {
+    const listIndex = getElementIndex(this.#lists, +listId);
+    if (listIndex >= 0) {
+      this.#lists[listIndex].title = title;
+      return true;
+    };
+    return false;
+  };
+
   deleteItem(listId, itemId) {
     const list = this.#getList(+listId);
     const itemIndex = list && getElementIndex(list.items, +itemId);

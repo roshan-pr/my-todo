@@ -2,7 +2,7 @@ const createCheckbox = (items, listId) => {
 	const checkboxes = items.map(({ id, description, status }) => {
 		const state = status ? 'checked' : '';
 		const dom = ['div', { className: 'item', id: id },
-			['div', { className: 'checkbox' },
+			['div', { className: 'task beside' },
 				['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
 				['div', { className: 'description' }, description]],
 			['div', { className: 'delete-item fa-solid fa-trash', onclick: deleteItem }, '']
@@ -12,20 +12,45 @@ const createCheckbox = (items, listId) => {
 	return checkboxes;
 };
 
+const generateEditBox = (id, content) => {
+	const dom = ['form', { id, className: 'beside editor', onsubmit: editList },
+		['input', { type: 'text', name: 'title', id: 'add-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
+		['input', { type: 'hidden', name: 'listId', value: id }, ''],
+		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
+		['div', { type: 'submit', name: 'edit', id, className: 'add-btn fa-solid fa-check', onclick: editList }, '']
+	];
+	return generateHtml(dom);
+};
+
+const showEditBar = (event) => {
+	const { target } = event;
+	const header = target.closest('.list-header');
+	const { id, innerText } = target;
+	header.replaceChildren(generateEditBox(id, innerText));
+	header.querySelector('input').focus();
+};
+
+const createCardHeader = (id, title) => {
+	return ['div', { className: 'list-header' },
+		['div', { className: 'title', id, onclick: showEditBar }, title],
+		['div', { className: 'icon fa-solid fa-trash', onclick: deleteList, }, '']
+	];
+};
+
+const createCardForm = (id, items) => {
+	return ['div', { className: 'card-body' },
+		['div', { className: 'items' }, ...createCheckbox(items, id)],
+		['form', { id, onsubmit: addItem, className: 'beside' },
+			['input', { type: 'hidden', name: 'listId', value: id }, ''],
+			['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: true }, ''],
+			['button', { type: 'submit', name: 'submit', className: 'add-btn' }, 'Add']
+		]];
+};
+
 const createAList = ({ id, title, items }) => {
 	const dom = ['div', { className: 'list', id },
-		['div', { className: 'list-header' },
-			['div', { className: 'title' }, title],
-			['div', { className: 'icon fa-solid fa-trash', onclick: deleteList, }, '']
-		],
-		['form', { id, onsubmit: addItem },
-			['div', { className: 'items' }, ...createCheckbox(items, id)],
-			['input', { type: 'hidden', name: 'listId', value: id }, ''],
-			['div', { className: 'input-text', style: 'display:flex' },
-				['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: true }, ''],
-				['button', { type: 'submit', name: 'submit', id: 'add-item-btn' }, 'Add']
-			]],
-	];
+		createCardHeader(id, title),
+		createCardForm(id, items)];
 	return generateHtml(dom);
 };
 
@@ -35,7 +60,7 @@ const createTemplateList = () => {
 			['div', { className: ' list-header input-text' },
 				['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', required: true }, ''],
 			]],
-		['div', { className: 'add-icon', onclick: showAddList },
+		['div', { className: 'temp-card', onclick: showAddList },
 			['div', { className: 'fa-solid fa-plus' }, ''],
 			['span', {}, 'click to add more']
 		]
@@ -134,6 +159,20 @@ const addList = (event) => {
 
 	const request = {
 		method: 'POST', url: '/todo/add-list',
+		'content-type': 'application/x-www-form-urlencoded'
+	}
+	xhrRequest(request, loadTodo, body);
+};
+
+const editList = (event) => {
+	event.preventDefault();
+
+	const form = event.target.closest('form');
+	const formElement = new FormData(form);
+	const body = new URLSearchParams(formElement);
+
+	const request = {
+		method: 'POST', url: '/todo/edit-list',
 		'content-type': 'application/x-www-form-urlencoded'
 	}
 	xhrRequest(request, loadTodo, body);

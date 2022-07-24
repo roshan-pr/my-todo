@@ -78,23 +78,35 @@ main {
 .title,
 .addList {
     max-width: 100%;
+    height: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-form {
-    height: 82%;
+.editor {
+    width: 100%;
 }
 
-.add-icon {
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90%;
+}
+
+.beside {
+    display: flex;
+}
+
+.temp-card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
 }
 
-.checkbox {
-    width: 80%;
-    display: flex;
+.task {
+    width: 90%;
 }
 
 .delete-item {
@@ -109,29 +121,17 @@ form {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px;
+    padding: 10px;
     border-bottom: 1px solid #00000024;
     border-radius: .3em;
-    height: 2em;
-    margin: 5px 0px;
-}
-
-.icon>img {
-    width: 30px;
-    aspect-ratio: 1/1;
 }
 
 .items {
     margin: 5px 0px;
-    height: 98%;
     overflow: scroll;
 }
 
-.input-text {
-    margin-top: 10px;
-}
-
-#add-item-btn {
+.add-btn {
     padding: 0px 10px;
     margin-left: 10px;
 }
@@ -139,10 +139,22 @@ form {
 input[type='text'] {
     width: 100%;
     height: 30px;
+    font-size: 1em;
+    font-weight: 800;
+}
+
+input[type='text']:focus {
+    outline: none;
+}
+
+.border-bottom {
+    border: none;
+    border-bottom: 1px solid #00000063;
 }
 
 input[type='checkbox'] {
-    width: 1.8em;
+    width: 1.3em;
+    height: 1.3em;
     aspect-ratio: 1/1;
 }
 
@@ -150,5 +162,5 @@ input[type='checkbox'] {
     word-wrap: break-word;
     font-weight: 600;
     padding: 0px 1em;
-    width: 100%;
+    width: 90%;
 }

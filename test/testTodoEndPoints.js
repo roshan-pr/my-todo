@@ -201,7 +201,7 @@ describe('POST /todo/delete-list', () => {
   });
 });
 
-describe.only('POST /todo/delete-item', () => {
+describe('POST /todo/delete-item', () => {
   let app;
   let cookie;
   beforeEach((done) => {
@@ -232,6 +232,42 @@ describe.only('POST /todo/delete-item', () => {
       .set('cookie', cookie)
       .set('content-type', 'application/json')
       .send(JSON.stringify({ listId: 3, itemId: 3 }))
+      .expect(/err/)
+      .expect(400, done)
+  });
+});
+
+describe('POST /todo/edit-list', () => {
+  let app;
+  let cookie;
+  beforeEach((done) => {
+    initTestData();
+    app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/login')
+      .send('name=ram&password=123')
+      .end((err, res) => {
+        cookie = res.header['set-cookie'];
+        done();
+      })
+  });
+
+  it('Should edit title of given list.', (done) => {
+    request(app)
+      .post('/todo/edit-list')
+      .set('cookie', cookie)
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 1, title: 'title1' }))
+      .expect(200, done)
+  });
+
+
+  it('Should give err for invalid details.', (done) => {
+    request(app)
+      .post('/todo/edit-list')
+      .set('cookie', cookie)
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({ listId: 3, title: 'non-existing title' }))
       .expect(/err/)
       .expect(400, done)
   });

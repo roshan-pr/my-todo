@@ -1,17 +1,18 @@
 # DOING
 
-  - [ ] Implement edit option for title
+  - [ ] Implement edit option for item
 
 # TODO
 
   - [ ] Modify the template creation for new list
-  - [ ] Implement edit option for item
+  - [ ] Implement search feature
 
   - [ ] Make username case insensitive, Persist username in lowercase.
   - [ ] Separate handlers and routers
 
 # Done
 
+  - [x] Implement edit option for title
   - [x] Try dotenv
   - [x] Introduce class for todo list
   - [x] Style the list template.
