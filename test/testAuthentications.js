@@ -121,6 +121,17 @@ describe('GET /signup', () => {
 });
 
 describe('POST /signup', () => {
+  it('Should redirect to home page by assigning cookie', (done) => {
+    const app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/signup')
+      .send('name=raj&password=abc')
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .expect('set-cookie', /.*/)
+      .expect('location', '/todo')
+      .expect(302, done)
+  });
+
   it('Should serve same page with error message', (done) => {
     const app = createApp(appConfig, session, readFile, writeFile);
     request(app)

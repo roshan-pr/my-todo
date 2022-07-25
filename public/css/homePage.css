@@ -77,7 +77,7 @@ main {
 
 .title,
 .addList {
-    max-width: 100%;
+    min-width: 90%;
     height: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -152,6 +152,10 @@ input[type='text']:focus {
     border-bottom: 1px solid #00000063;
 }
 
+.padding-left {
+    padding-left: 20px;
+}
+
 input[type='checkbox'] {
     width: 1.3em;
     height: 1.3em;
@@ -163,4 +167,5 @@ input[type='checkbox'] {
     font-weight: 600;
     padding: 0px 1em;
     width: 90%;
+    min-height: 30px;
 }

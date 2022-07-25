@@ -1,17 +1,19 @@
 # DOING
 
-  - [ ] Implement edit option for item
-
+  - [ ] Implement search feature
+    - [ ] Style the home page
+    
 # TODO
 
+  - [ ] Introduce lodash for todo operations
   - [ ] Modify the template creation for new list
-  - [ ] Implement search feature
 
   - [ ] Make username case insensitive, Persist username in lowercase.
   - [ ] Separate handlers and routers
 
 # Done
 
+  - [x] Implement edit option for item
   - [x] Implement edit option for title
   - [x] Try dotenv
   - [x] Introduce class for todo list

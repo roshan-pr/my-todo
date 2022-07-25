@@ -1,20 +1,6 @@
-const createCheckbox = (items, listId) => {
-	const checkboxes = items.map(({ id, description, status }) => {
-		const state = status ? 'checked' : '';
-		const dom = ['div', { className: 'item', id: id },
-			['div', { className: 'task beside' },
-				['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
-				['div', { className: 'description' }, description]],
-			['div', { className: 'delete-item fa-solid fa-trash', onclick: deleteItem }, '']
-		]
-		return dom;
-	});
-	return checkboxes;
-};
-
-const generateEditBox = (id, content) => {
+const generateListEditBox = (id, content) => {
 	const dom = ['form', { id, className: 'beside editor', onsubmit: editList },
-		['input', { type: 'text', name: 'title', id: 'add-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
+		['input', { type: 'text', name: 'title', id: 'edit-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
 		['input', { type: 'hidden', name: 'listId', value: id }, ''],
 		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
 		['div', { type: 'submit', name: 'edit', id, className: 'add-btn fa-solid fa-check', onclick: editList }, '']
@@ -22,17 +8,55 @@ const generateEditBox = (id, content) => {
 	return generateHtml(dom);
 };
 
-const showEditBar = (event) => {
+const showListEditBar = (event) => {
 	const { target } = event;
 	const header = target.closest('.list-header');
 	const { id, innerText } = target;
-	header.replaceChildren(generateEditBox(id, innerText));
+	header.replaceChildren(generateListEditBox(id, innerText));
 	header.querySelector('input').focus();
+};
+
+//// - Show Item Edit Bar
+
+const generateItemEditBox = (content, listId, id) => {
+	const dom = ['form', { id, className: 'beside editor padding-left ', onsubmit: editItem },
+		['input', { type: 'text', name: 'description', id: 'edit-item', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
+		['input', { type: 'hidden', name: 'listId', value: listId }, ''],
+		['input', { type: 'hidden', name: 'itemId', value: id }, ''],
+		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
+		['div', { type: 'submit', name: 'edit', id, className: 'add-btn fa-solid fa-check', onclick: editItem }, '']
+	];
+	return generateHtml(dom);
+};
+
+const showItemEditBar = (event) => {
+	const { target } = event;
+	const item = target.closest('.item');
+	const { id, listId, innerText } = item;
+	console.log(id, listId, innerText);
+	item.lastChild.remove();
+	item.appendChild(generateItemEditBox(innerText, listId, id));
+	item.querySelector('#edit-item').focus();
+	return;
+};
+
+const createCheckbox = (items, listId) => {
+	const checkboxes = items.map(({ id, description, status }) => {
+		const state = status ? 'checked' : '';
+		const dom = ['div', { className: 'item', listId, id: id },
+			['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
+			['div', { className: 'task beside' },
+				['div', { className: 'description', onclick: showItemEditBar }, description],
+				['div', { className: 'delete-item fa-solid fa-trash', onclick: deleteItem }, '']]
+		]
+		return dom;
+	});
+	return checkboxes;
 };
 
 const createCardHeader = (id, title) => {
 	return ['div', { className: 'list-header' },
-		['div', { className: 'title', id, onclick: showEditBar }, title],
+		['div', { className: 'title', id, onclick: showListEditBar }, title],
 		['div', { className: 'icon fa-solid fa-trash', onclick: deleteList, }, '']
 	];
 };
@@ -145,6 +169,20 @@ const addItem = (event) => {
 
 	const request = {
 		method: 'POST', url: '/todo/add-item',
+		'content-type': 'application/x-www-form-urlencoded'
+	}
+	xhrRequest(request, loadTodo, body);
+};
+
+const editItem = (event) => {
+	event.preventDefault();
+
+	const form = event.target.closest('form');
+	const formElement = new FormData(form);
+	const body = new URLSearchParams(formElement);
+
+	const request = {
+		method: 'POST', url: '/todo/edit-item',
 		'content-type': 'application/x-www-form-urlencoded'
 	}
 	xhrRequest(request, loadTodo, body);

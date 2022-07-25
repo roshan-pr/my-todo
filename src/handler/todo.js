@@ -44,6 +44,19 @@ const addItem = (req, res, next) => {
   next();
 };
 
+const editItem = (req, res, next) => {
+  const todoRecord = req.todoRecord;
+
+  const { listId, itemId, description } = req.body;
+  const modify = todoRecord.editItem(listId, itemId, description);
+  if (!modify) {
+    res.status(400).json({ err: description + ' cant be edited' });
+    return;
+  };
+  // console.log('Successfully edited task :', description);
+  next();
+};
+
 const markItem = (req, res, next) => {
   const todoRecord = req.todoRecord;
 
@@ -127,6 +140,7 @@ const createTodoRouter = (todoFilePath, readFile, writeFile) => {
   todoRouter.post('/delete-item', deleteItem, persistTodoRecord);
 
   todoRouter.post('/edit-list', editList, persistTodoRecord);
+  todoRouter.post('/edit-item', editItem, persistTodoRecord);
 
   return todoRouter;
 }

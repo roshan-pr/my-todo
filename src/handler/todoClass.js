@@ -54,6 +54,16 @@ class Todo {
     return false;
   };
 
+  editItem(listId, itemId, description) {
+    const list = this.#getList(+listId);
+    const itemIndex = getElementIndex(list.items, +itemId);
+    if (list && itemIndex >= 0) {
+      list.items[itemIndex].description = description; // Updating in memory
+      return true;
+    }
+    return false;
+  };
+
   markItem(listId, itemId, status) {
     const item = this.#getItem(+listId, +itemId);
     if (item) {
