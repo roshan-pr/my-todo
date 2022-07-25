@@ -19,10 +19,10 @@ const createSignUpPage = (message = '') => `
           <label>Password</label>
           <input type="password" name="password" id="password" >
         </div>
-        <button class="signup-button">Signup</button>
+        <button class="signup-button">Sign Up</button>
       </form>
 
-      <span>Have an account ? <a href="/login">Login</a></span>
+      <span>Have an account ? <a href="/login">Log In</a></span>
       <span class="message">${message}</span>
 
     </div>

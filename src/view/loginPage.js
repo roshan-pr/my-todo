@@ -9,7 +9,7 @@ const createLoginPage = (err = '') => `
 <body>
   <div class="page-wrapper">
     <div class="login">
-      <h1>Login</h1>
+      <h1>Log In</h1>
 
       <form action="/login" method="POST">
         <div class="fields">
@@ -20,10 +20,10 @@ const createLoginPage = (err = '') => `
           <label> Password</label>
           <input type="password" name="password" id="password">
         </div>
-        <button class="login-button">Login</button>
+        <button class="login-button">Log In</button>
       </form>
       
-      <span>New user ? <a href="signup">Signup</a></span>
+      <span>New user ? <a href="signup">Sign Up</a></span>
       <span class="message">${err}</span>
     </div>
   </div>

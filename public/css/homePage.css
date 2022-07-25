@@ -102,18 +102,19 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
 }
 
 .task {
     width: 90%;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.delete-item {
+.item .delete-btn {
     visibility: hidden;
 }
 
-.item:hover .delete-item {
+.item:hover .delete-btn {
     visibility: visible;
 }
 
@@ -129,6 +130,15 @@ main {
 .items {
     margin: 5px 0px;
     overflow: scroll;
+}
+
+.add-btn,
+.delete-btn,
+.temp-card,
+.status,
+.description,
+.title {
+    cursor: pointer;
 }
 
 .add-btn {
@@ -165,7 +175,7 @@ input[type='checkbox'] {
 .description {
     word-wrap: break-word;
     font-weight: 600;
-    padding: 0px 1em;
+    /* padding: 0px 1em; */
     width: 90%;
     min-height: 30px;
 }

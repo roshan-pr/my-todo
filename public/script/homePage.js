@@ -47,7 +47,7 @@ const createCheckbox = (items, listId) => {
 			['input', { className: 'status', type: "checkbox", id: id, onclick: markItem, [state]: status }, ''],
 			['div', { className: 'task beside' },
 				['div', { className: 'description', onclick: showItemEditBar }, description],
-				['div', { className: 'delete-item fa-solid fa-trash', onclick: deleteItem }, '']]
+				['div', { className: 'delete-btn fa-solid fa-trash', onclick: deleteItem }, '']]
 		]
 		return dom;
 	});
@@ -57,7 +57,7 @@ const createCheckbox = (items, listId) => {
 const createCardHeader = (id, title) => {
 	return ['div', { className: 'list-header' },
 		['div', { className: 'title', id, onclick: showListEditBar }, title],
-		['div', { className: 'icon fa-solid fa-trash', onclick: deleteList, }, '']
+		['div', { className: 'delete-btn fa-solid fa-trash', onclick: deleteList, }, '']
 	];
 };
 
@@ -71,10 +71,24 @@ const createCardForm = (id, items) => {
 		]];
 };
 
+const groupByCompleted = (items) => {
+	const completed = [];
+	const unCompleted = [];
+	items.forEach(item => {
+		if (item.status) {
+			completed.push(item);
+			return;
+		};
+		unCompleted.push(item);
+	});
+	return [...unCompleted, ...completed];
+};
+
 const createAList = ({ id, title, items }) => {
+	const sortedItems = groupByCompleted(items);
 	const dom = ['div', { className: 'list', id },
 		createCardHeader(id, title),
-		createCardForm(id, items)];
+		createCardForm(id, sortedItems)];
 	return generateHtml(dom);
 };
 
@@ -108,6 +122,7 @@ const xhrRequest = (request, cb, body = '') => {
 	xhr.setRequestHeader('content-type', contentType);
 	xhr.send(body);
 };
+
 
 const renderLists = ({ response }) => {
 	const defaultRes = { lists: [], username: 'unknown' }
