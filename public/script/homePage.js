@@ -1,6 +1,8 @@
+let TODO_RECORDS = {};
+
 const generateListEditBox = (id, content) => {
 	const dom = ['form', { id, className: 'beside editor', onsubmit: editList },
-		['input', { type: 'text', name: 'title', id: 'edit-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
+		['input', { type: 'text', name: 'title', id: 'edit-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' Add list...', required: true }, ''],
 		['input', { type: 'hidden', name: 'listId', value: id }, ''],
 		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
 		['div', { type: 'submit', name: 'edit', id, className: 'add-btn fa-solid fa-check', onclick: editList }, '']
@@ -16,11 +18,10 @@ const showListEditBar = (event) => {
 	header.querySelector('input').focus();
 };
 
-//// - Show Item Edit Bar
-
+// - For Item Edit Bar
 const generateItemEditBox = (content, listId, id) => {
 	const dom = ['form', { id, className: 'beside editor padding-left ', onsubmit: editItem },
-		['input', { type: 'text', name: 'description', id: 'edit-item', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' ...add list', required: true }, ''],
+		['input', { type: 'text', name: 'description', id: 'edit-item', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' Add item...', required: true }, ''],
 		['input', { type: 'hidden', name: 'listId', value: listId }, ''],
 		['input', { type: 'hidden', name: 'itemId', value: id }, ''],
 		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
@@ -33,7 +34,6 @@ const showItemEditBar = (event) => {
 	const { target } = event;
 	const item = target.closest('.item');
 	const { id, listId, innerText } = item;
-	console.log(id, listId, innerText);
 	item.lastChild.remove();
 	item.appendChild(generateItemEditBox(innerText, listId, id));
 	item.querySelector('#edit-item').focus();
@@ -66,7 +66,7 @@ const createCardForm = (id, items) => {
 		['div', { className: 'items' }, ...createCheckbox(items, id)],
 		['form', { id, onsubmit: addItem, className: 'beside' },
 			['input', { type: 'hidden', name: 'listId', value: id }, ''],
-			['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: '...add item', required: true }, ''],
+			['input', { type: 'text', name: 'description', id: 'add-item', maxlength: '40', placeholder: ' Add item...', required: true }, ''],
 			['button', { type: 'submit', name: 'submit', className: 'add-btn' }, 'Add']
 		]];
 };
@@ -84,7 +84,7 @@ const groupByCompleted = (items) => {
 	return [...unCompleted, ...completed];
 };
 
-const createAList = ({ id, title, items }) => {
+const generateAList = ({ id, title, items }) => {
 	const sortedItems = groupByCompleted(items);
 	const dom = ['div', { className: 'list', id },
 		createCardHeader(id, title),
@@ -93,23 +93,25 @@ const createAList = ({ id, title, items }) => {
 };
 
 const createTemplateList = () => {
-	const dom = ['div', { className: 'create-list' },
+	return ['div', { className: 'create-list' },
 		['form', { onsubmit: addList },
 			['div', { className: ' list-header input-text' },
-				['input', { type: 'text', name: 'title', id: 'add-list', placeholder: '...add list', maxlength: '26', required: true }, ''],
-			]],
+				['input', {
+					type: 'text', name: 'title', id: 'add-list', className: 'border-bottom',
+					placeholder: 'Add list...', maxlength: '26', required: true
+				}, '']]
+		],
 		['div', { className: 'temp-card', onclick: showAddList },
 			['div', { className: 'fa-solid fa-plus' }, ''],
 			['span', {}, 'click to add more']
-		]
-	];
-	return generateHtml(dom);
+		]];
 };
 
 const showAddList = (event) => {
 	const form = document.querySelector('.create-list>form');
 	form.style.visibility = 'visible';
 	const textBox = document.getElementById('add-list');
+	document.querySelector('.temp-card').remove();
 	textBox.focus();
 };
 
@@ -123,25 +125,30 @@ const xhrRequest = (request, cb, body = '') => {
 	xhr.send(body);
 };
 
-
-const renderLists = ({ response }) => {
-	const defaultRes = { lists: [], username: 'unknown' }
-	const { lists, username } = response ? JSON.parse(response) : defaultRes;
+const drawInMain = (views) => {
 	const mainViewElement = document.querySelector('main');
 	mainViewElement.innerHTML = '';
-	mainViewElement.append(createTemplateList());
 
-	const listViews = lists.map(createAList);
-	listViews.forEach(list =>
-		mainViewElement.appendChild(list)
+	views.forEach(view =>
+		mainViewElement.appendChild(view)
 	);
+};
+
+const renderPage = ({ response }) => {
+	const defaultRes = { lists: [], username: 'unknown' }
+	const { lists, username } = response ? JSON.parse(response) : defaultRes;
+	TODO_RECORDS = lists;
+
+	const templateCard = generateHtml(createTemplateList());
+	const listViews = lists.map(generateAList);
+	drawInMain([templateCard, ...listViews]);
 };
 
 const loadTodo = () => {
 	const request = {
 		method: 'GET', url: '/todo/api',
 	};
-	xhrRequest(request, renderLists);
+	xhrRequest(request, renderPage);
 };
 
 const markItem = (event) => {
@@ -157,7 +164,7 @@ const markItem = (event) => {
 const deleteList = (event) => {
 	const listId = event.target.closest('.list').id;
 	const body = JSON.stringify({ listId });
-	const confirmDelete = confirm('Delete this List');
+	const confirmDelete = confirm('Delete this list ?');
 	if (confirmDelete) {
 		const request = { method: 'POST', url: '/todo/delete-list', 'content-type': 'application/json' }
 		xhrRequest(request, loadTodo, body);
@@ -168,7 +175,7 @@ const deleteItem = (event) => {
 	const listId = event.target.closest('.list').id;
 	const itemId = event.target.closest('.item').id;
 	const body = JSON.stringify({ listId, itemId });
-	const confirmDelete = confirm('Delete this List');
+	const confirmDelete = confirm('Delete this item ?');
 	if (confirmDelete) {
 		const request = { method: 'POST', url: '/todo/delete-item', 'content-type': 'application/json' }
 		xhrRequest(request, loadTodo, body);
@@ -231,9 +238,33 @@ const editList = (event) => {
 	xhrRequest(request, loadTodo, body);
 };
 
+const searchQuery = (event) => {
+	const searchStr = event.target.value;
+	if (!searchStr) {
+		loadTodo();
+	}
+
+	const filteredList = TODO_RECORDS.filter(list => {
+		if (list.title.includes(searchStr)) {
+			return true;
+		}
+		console.log(list, list.items.some(item => item.description.includes(searchStr)));
+		return list.items.some(item => item.description.includes(searchStr));
+	});
+
+	const templateCard = generateHtml(createTemplateList());
+	const listViews = filteredList.map(generateAList);
+	drawInMain([templateCard, ...listViews]);
+};
+
 const main = () => {
 	console.log('Home page loaded!');
+	const searchBar = document.querySelector('.search');
+
+	searchBar.onkeyup = searchQuery;
 	loadTodo();
+	searchBar.focus();
+
 };
 
 window.onload = main;

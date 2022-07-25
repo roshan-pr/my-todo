@@ -1,7 +1,5 @@
 # DOING
 
-  - [ ] Implement search feature
-    - [ ] Style the home page
     
 # TODO
 
@@ -13,6 +11,8 @@
 
 # Done
 
+  - [x] Implement search feature
+    - [x] Style the home page
   - [x] Implement edit option for item
   - [x] Implement edit option for title
   - [x] Try dotenv

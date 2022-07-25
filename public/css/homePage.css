@@ -19,19 +19,28 @@ nav {
 .profile {
     height: 100%;
     display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    align-items: flex-end;
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.search {
+    width: 400px;
+    height: 30px;
+    padding: 10px;
+    font-size: 1.2em;
 }
 
 .username {
     font-size: 2em;
     font-weight: 800;
+    padding: 10px;
 }
 
 .logout {
-    float: right;
+    padding: 10px;
+    font-size: 2em;
+    border-left: 1px solid black;
 }
 
 main {
@@ -71,7 +80,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #00000024;
+    border-bottom: 1px solid #00000078;
     border-radius: .3em;
 }
 

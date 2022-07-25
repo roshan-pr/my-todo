@@ -13,10 +13,12 @@ const createHomePage = (username = '') => `
 	<body>
 		<nav>
 			<div class="main-head">TODO</div>
+			<input class="search" placeholder="Search"></input>
 			<div class="profile">
-				<div class="username">hello, ${username}</div>
-				<div class="logout"><a href="logout">Logout</a></div>
-			</div>
+				<div class="username">Hello ${username}</div>
+				<a href="logout">
+					<div class="logout fa-solid fa-arrow-right-from-bracket"></div>
+				</a>
 		</nav>
 		<main>
 
