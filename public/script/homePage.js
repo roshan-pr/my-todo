@@ -295,9 +295,6 @@ const searchQuery = (event) => {
 
 	const status = filterView.value;
 	const searchStr = searchView.value.toLowerCase();
-	if (!searchStr) {
-		loadTodo();
-	}
 
 	const filteredList = filterLists(searchStr, status);
 	const templateCard = generateHtml(createTemplateList());

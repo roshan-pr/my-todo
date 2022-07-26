@@ -141,6 +141,16 @@ describe('POST /signup', () => {
       .expect(/Username exists, try another name./)
       .expect(200, done)
   });
+
+  it('Should redirect to login for invalid credentials', (done) => {
+    const app = createApp(appConfig, session, readFile, writeFile);
+    request(app)
+      .post('/signup')
+      .send('name=&password=')
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .expect('location', '/login')
+      .expect(302, done)
+  });
 });
 
 describe('GET /logout', () => {

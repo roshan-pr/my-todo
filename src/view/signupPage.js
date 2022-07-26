@@ -13,11 +13,11 @@ const createSignUpPage = (message = '') => `
       <form action="/signup" method="POST">
         <div class="fields">
           <label>Username</label>
-          <input type="text" name="name" id="name">
+          <input type="text" name="name" id="name" required>
         </div>
         <div class="fields">
           <label>Password</label>
-          <input type="password" name="password" id="password" >
+          <input type="password" name="password" id="password" required>
         </div>
         <button class="signup-button">Sign Up</button>
       </form>

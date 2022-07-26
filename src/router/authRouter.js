@@ -11,6 +11,7 @@ const { authUser } = require('../middleware/authUser.js');
 const { existingUser } = require('../middleware/existingUser.js');
 const { registerUser } = require('../middleware/registerUser.js');
 const { loadTodo } = require('../middleware/loadTodo.js');
+const { validCredential } = require('../middleware/validCredential.js');
 
 const redirectToTodo = (req, res) => res.redirect('/todo');
 
@@ -20,14 +21,17 @@ const injectTodo = (todoFilePath, readFile) => {
     req.todo = todo;
     next();
   };
-}
+};
+
 const createAuthRouter = (todoFilePath, usersFilePath, readFile, writeFile) => {
   const authRouter = express.Router();
   // const injectTodo = loadTodo(todoFilePath, readFile, writeFile);
 
   authRouter.get('/login', authSession, serveLoginPage());
-  authRouter.post('/login', authUser, assignSession, redirectToTodo);
-  authRouter.post('/signup', existingUser, injectTodo(todoFilePath, readFile),
+  authRouter.post('/login', validCredential,
+    authUser, assignSession, redirectToTodo);
+  authRouter.post('/signup', validCredential, existingUser,
+    injectTodo(todoFilePath, readFile),
     registerUser,
     persistTodo(todoFilePath, writeFile),
     persistUsers(usersFilePath, writeFile),

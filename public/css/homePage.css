@@ -205,7 +205,6 @@ input[type='checkbox'] {
 .description {
     word-wrap: break-word;
     font-weight: 600;
-    /* padding: 0px 1em; */
     width: 90%;
     min-height: 30px;
 }
