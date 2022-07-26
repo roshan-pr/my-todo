@@ -257,41 +257,78 @@ const editList = (event) => {
 	xhrRequest(request, loadTodo, body);
 };
 
+const filterItems = (items, searchStr, status) => {
+	return items.filter(item => {
+		const description = item.description.toLowerCase();
+		const isMatched = description.includes(searchStr);
+		console.log(description, isMatched);
+		if (status === 'done')
+			return isMatched && item.status;
+		if (status === 'undone')
+			return isMatched && !item.status;
+		return isMatched;
+	});
+};
+
+const filterLists = (searchStr, status) => {
+	const filteredList = [];
+	TODO_RECORDS.forEach(list => {
+
+		const listTitle = list.title.toLowerCase();
+		if (listTitle.includes(searchStr) && status === 'all') {
+			filteredList.push(list);
+			return;
+		}
+		const filteredItems = filterItems(list.items, searchStr, status);
+		if (filteredItems.length > 0) {
+			const newList = { ...list };
+			newList.items = filteredItems;
+			filteredList.push(newList);
+		}
+	});
+	return filteredList;
+};
+
 const searchQuery = (event) => {
-	const searchStr = event.target.value;
+	const searchView = document.querySelector('.search-bar');
+	const filterView = document.querySelector('.filter-box>#selector');
+
+	const status = filterView.value;
+	const searchStr = searchView.value.toLowerCase();
 	if (!searchStr) {
 		loadTodo();
 	}
 
-	const filteredList = [];
-	TODO_RECORDS.forEach(list => {
-		if (list.title.includes(searchStr)) {
-			filteredList.push(list);
-			return;
-		}
-		const items = list.items.filter(item => {
-			return item.description.includes(searchStr);
-		});
-		if (items.length > 0) {
-			const newList = { ...list };
-			newList.items = items;
-			filteredList.push(newList);
-		}
-	});
-
+	const filteredList = filterLists(searchStr, status);
 	const templateCard = generateHtml(createTemplateList());
 	const listViews = filteredList.map(generateAList);
 	drawInMain([templateCard, ...listViews]);
 };
 
-const main = () => {
-	console.log('Home page loaded!');
+const createFilterBox = () => {
+	return ['div', { className: 'filter-box' },
+		['select', { id: 'selector', onchange: searchQuery },
+			['option', { value: 'all' }, 'All'],
+			['option', { value: 'done' }, 'Done'],
+			['option', { value: 'undone' }, 'Undone'],
+		]];
+};
+
+const initSearch = () => {
 	const searchBar = document.querySelector('.search');
+	const filterBox = generateHtml(createFilterBox());
+	const searchParent = searchBar;
+	searchParent.appendChild(filterBox);
 
 	searchBar.onkeyup = searchQuery;
-	loadTodo();
 	searchBar.focus();
+};
 
+const main = () => {
+	console.log('Home page loaded!');
+
+	loadTodo();
+	initSearch();
 };
 
 window.onload = main;

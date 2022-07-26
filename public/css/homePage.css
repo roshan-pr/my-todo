@@ -25,10 +25,28 @@ nav {
 }
 
 .search {
+    display: flex;
+    align-items: center;
     width: 400px;
     height: 30px;
     padding: 10px;
+}
+
+.search-bar {
+    height: 100%;
+    width: 100%;
+    border: none;
     font-size: 1.2em;
+    border-bottom: 1px solid grey;
+    outline: none;
+}
+
+.filter-box>#selector {
+    margin: 10px;
+    height: 100%;
+    border: none;
+    border-bottom: 1px solid grey;
+    outline: none;
 }
 
 .username {
@@ -40,6 +58,7 @@ nav {
 .logout {
     padding: 10px;
     font-size: 2em;
+    color: black;
     border-left: 1px solid black;
 }
 
@@ -48,6 +67,8 @@ main {
     justify-content: center;
     flex-wrap: wrap;
     padding: 10px;
+    height: 85%;
+    overflow: scroll;
 }
 
 .main-head {

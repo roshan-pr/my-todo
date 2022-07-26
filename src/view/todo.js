@@ -13,7 +13,9 @@ const createHomePage = (username = '') => `
 	<body>
 		<nav>
 			<div class="main-head">TODO</div>
-			<input class="search" placeholder="Search"></input>
+			<div class="search">
+				<input class="search-bar" placeholder="Search">
+			</div>
 			<div class="profile">
 				<div class="username">Hello ${username}</div>
 				<a href="logout">
