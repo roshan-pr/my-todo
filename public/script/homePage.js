@@ -1,10 +1,10 @@
 let TODO_RECORDS = {};
 
-const generateListEditBox = (id, content) => {
+const generateListEditBox = (id, content, cancelChanges) => {
 	const dom = ['form', { id, className: 'beside editor', onsubmit: editList },
 		['input', { type: 'text', name: 'title', id: 'edit-list', className: 'border-bottom', maxlength: '40', value: content, placeholder: ' Add list...', required: true }, ''],
 		['input', { type: 'hidden', name: 'listId', value: id }, ''],
-		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: loadTodo }, ''],
+		['div', { name: 'cancel', id, className: 'add-btn fa-solid fa-xmark', onclick: cancelChanges }, ''],
 		['div', { type: 'submit', name: 'edit', id, className: 'add-btn fa-solid fa-check', onclick: editList }, '']
 	];
 	return generateHtml(dom);
@@ -14,8 +14,14 @@ const showListEditBar = (event) => {
 	const { target } = event;
 	const header = target.closest('.list-header');
 	const { id, innerText } = target;
-	header.replaceChildren(generateListEditBox(id, innerText));
-	header.querySelector('input').focus();
+
+	const children = [...header.children];
+	const cancelChanges = () => header.replaceChildren(...children);
+
+	header.replaceChildren(generateListEditBox(id, innerText, cancelChanges));
+	const editBox = header.querySelector('input');
+	editBox.focus();
+	editBox.select();
 };
 
 // - For Item Edit Bar
@@ -36,8 +42,9 @@ const showItemEditBar = (event) => {
 	const { id, listId, innerText } = item;
 	item.lastChild.remove();
 	item.appendChild(generateItemEditBox(innerText, listId, id));
-	item.querySelector('#edit-item').focus();
-	return;
+	const editBox = item.querySelector('#edit-item')
+	editBox.focus();
+	editBox.select();
 };
 
 const createCheckbox = (items, listId) => {
@@ -92,27 +99,42 @@ const generateAList = ({ id, title, items }) => {
 	return generateHtml(dom);
 };
 
-const createTemplateList = () => {
+const createAddListIcon = () => {
+	return ['div', { className: 'add-list-icon', onclick: showAddList },
+		['div', { className: 'fa-solid fa-plus' }, ''],
+		['span', {}, 'click to add more']
+	];
+};
+
+const createTemplateList = (cancelChanges) => {
 	return ['div', { className: 'create-list' },
-		['form', { onsubmit: addList },
-			['div', { className: ' list-header input-text' },
-				['input', {
-					type: 'text', name: 'title', id: 'add-list', className: 'border-bottom',
-					placeholder: 'Add list...', maxlength: '26', required: true
-				}, '']]
-		],
-		['div', { className: 'temp-card', onclick: showAddList },
-			['div', { className: 'fa-solid fa-plus' }, ''],
-			['span', {}, 'click to add more']
-		]];
+		['div', { className: 'list-header' },
+			['form', { className: 'beside editor ', onsubmit: addList },
+				['input', { type: 'text', name: 'title', id: 'add-list', className: 'border-bottom', maxlength: '40', value: 'Untitled', required: true }, ''],
+				['div', { name: 'cancel', className: 'add-btn fa-solid fa-xmark', onclick: cancelChanges }, ''],
+				['div', { name: 'add-list', className: 'add-btn fa-solid fa-check', onclick: addList }, '']
+			]],
+		createAddListIcon()];
+};
+
+const generateTemplateCard = () => {
+
+	const cancelChanges = () => {
+		const titleView = document.querySelector('.create-list>.list-header');
+		titleView.style.visibility = 'hidden';
+		document.querySelector('.add-list-icon').style.visibility = 'visible';
+	};
+	return generateHtml(createTemplateList(cancelChanges));
 };
 
 const showAddList = (event) => {
-	const form = document.querySelector('.create-list>form');
-	form.style.visibility = 'visible';
+	const header = document.querySelector('.create-list>.list-header');
+	header.style.visibility = 'visible';
 	const textBox = document.getElementById('add-list');
-	document.querySelector('.temp-card').remove();
+	const addListIcon = document.querySelector('.add-list-icon')
+	addListIcon.style.visibility = 'hidden';
 	textBox.focus();
+	textBox.select();
 };
 
 const xhrRequest = (request, cb, body = '') => {
@@ -139,7 +161,7 @@ const renderPage = ({ response }) => {
 	const { lists, username } = response ? JSON.parse(response) : defaultRes;
 	TODO_RECORDS = lists;
 
-	const templateCard = generateHtml(createTemplateList());
+	const templateCard = generateTemplateCard();
 	const listViews = lists.map(generateAList);
 	drawInMain([templateCard, ...listViews]);
 };
@@ -182,12 +204,16 @@ const deleteItem = (event) => {
 	}
 };
 
+const getFormData = (event) => {
+	const form = event.target.closest('form');
+	const formElement = new FormData(form);
+	return new URLSearchParams(formElement);
+};
+
 const addItem = (event) => {
 	event.preventDefault();
 
-	const form = event.target.closest('form');
-	const formElement = new FormData(form);
-	const body = new URLSearchParams(formElement);
+	const body = getFormData(event);
 
 	const request = {
 		method: 'POST', url: '/todo/add-item',
@@ -199,10 +225,7 @@ const addItem = (event) => {
 const editItem = (event) => {
 	event.preventDefault();
 
-	const form = event.target.closest('form');
-	const formElement = new FormData(form);
-	const body = new URLSearchParams(formElement);
-
+	const body = getFormData(event);
 	const request = {
 		method: 'POST', url: '/todo/edit-item',
 		'content-type': 'application/x-www-form-urlencoded'
@@ -213,9 +236,7 @@ const editItem = (event) => {
 const addList = (event) => {
 	event.preventDefault();
 
-	const form = event.target.closest('form');
-	const formElement = new FormData(form);
-	const body = new URLSearchParams(formElement);
+	const body = getFormData(event);
 
 	const request = {
 		method: 'POST', url: '/todo/add-list',
@@ -227,9 +248,7 @@ const addList = (event) => {
 const editList = (event) => {
 	event.preventDefault();
 
-	const form = event.target.closest('form');
-	const formElement = new FormData(form);
-	const body = new URLSearchParams(formElement);
+	const body = getFormData(event);
 
 	const request = {
 		method: 'POST', url: '/todo/edit-list',
@@ -244,12 +263,20 @@ const searchQuery = (event) => {
 		loadTodo();
 	}
 
-	const filteredList = TODO_RECORDS.filter(list => {
+	const filteredList = [];
+	TODO_RECORDS.forEach(list => {
 		if (list.title.includes(searchStr)) {
-			return true;
+			filteredList.push(list);
+			return;
 		}
-		console.log(list, list.items.some(item => item.description.includes(searchStr)));
-		return list.items.some(item => item.description.includes(searchStr));
+		const items = list.items.filter(item => {
+			return item.description.includes(searchStr);
+		});
+		if (items.length > 0) {
+			const newList = { ...list };
+			newList.items = items;
+			filteredList.push(newList);
+		}
 	});
 
 	const templateCard = generateHtml(createTemplateList());

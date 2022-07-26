@@ -1,16 +1,17 @@
 # DOING
 
-    
+  - [ ] Search according to done or undone of task
+
 # TODO
 
   - [ ] Introduce lodash for todo operations
-  - [ ] Modify the template creation for new list
 
   - [ ] Make username case insensitive, Persist username in lowercase.
   - [ ] Separate handlers and routers
 
 # Done
 
+  - [x] Modify the template creation for new list
   - [x] Implement search feature
     - [x] Style the home page
   - [x] Implement edit option for item
