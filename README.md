@@ -33,24 +33,24 @@ Delete a todo list.
 **Edit**
 ```
 Edit title.
-    Allow the user to edit the title of a todo list
+     Edit the title of a todo list
     
 Edit tasks.
-    Allow the user to edit tasks within a todo list(change text)
+     Edit tasks within a todo list(change text)
 ```
 
 **Search**
 ```
 Search by title.
-    Allow the user to search all todo lists by their title
+     Search all todo lists by their title
     
 Search by task.
-    Allow the user to search todo tasks across _all_ lists
+     Search todo tasks across _all_ lists
     
 Search by completion.
-    Allow the user to search for all todo tasks that are marked as being done.
+     Search for all todo tasks that are marked as being done.
 ```
-<br><br>
+<br/><br/>
 
 # Run Server
 ```
