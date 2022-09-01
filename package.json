@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "mocha",
-    "start": "cp sample.env .env & node .",
+    "start": "node .",
     "install": "tar -xvzf set_up.tar.gz",
-    "setup": "npm install;"
+    "setup": "cp sample.env .env & npm install;"
   },
   "keywords": [],
   "author": "",
