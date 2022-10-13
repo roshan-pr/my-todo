@@ -10,7 +10,7 @@
     "test": "mocha",
     "start": "node .",
     "install": "tar -xvzf set_up.tar.gz",
-    "setup": "cp sample.env .env & npm install;"
+    "setup": "cp sample.env .env"
   },
   "keywords": [],
   "author": "",
